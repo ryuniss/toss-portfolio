@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NUNBIT — See People Not Noise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family:
+        -apple-system, BlinkMacSystemFont,
+        "SF Pro Display", "SF Pro Text",
+        "Inter", "Apple SD Gothic Neo",
+        "Pretendard", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    #app {
+      position: relative;
+      width: 100vw; height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* ─── 1. INTRO LAYER (전체화면 영상 + 자막 + 인포그래픽 + 브랜드 카드) ─── */
+    #introLayer {
+      position: absolute;
+      inset: 0; z-index: 50;
+      background: #000;
+      transition: opacity 900ms ease;
+    }
+    /* 인트로 배경 비디오 (전체화면) */
+    #introVideo {
+      position: absolute;
+      inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+    }
+    /* 인트로 건너뛰기 버튼 (우측 상단, 극도로 미니멀) */
+    .intro-top-bar {
+      position: absolute;
+      top: 24px; right: 28px;
+      z-index: 53;
+    }
+    .intro-skip-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.0);
+      border: none;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 13px; font-weight: 400;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: color 180ms ease;
+    }
+    .intro-skip-btn:hover {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* 인트로 오버레이 카피 — 왼쪽 중간 영역, Apple 광고 + 다큐멘터리 스타일 */
+    #introSubtitleBox {
+      position: absolute;
+      left: 6%;
+      top: 45%;
+      transform: translateY(-50%) translateY(8px);
+      z-index: 52;
+      opacity: 0; pointer-events: none;
+      transition:
+        opacity 600ms ease,
+        transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      align-items: stretch;
+      gap: 16px;
+      max-width: min(520px, 48vw);
+      padding: 0;
+    }
+    #introSubtitleBox.visible {
+      opacity: 1; transform: translateY(-50%) translateY(0);
+    }
+    /* 얇은 vertical accent line */
+    #introSubtitleBox::before {
+      content: '';
+      flex-shrink: 0;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 99px;
+      align-self: stretch;
+    }
+    #introSubText {
+      font-size: clamp(19px, 1.8vw, 24px);
+      font-weight: 350;
+      color: rgba(255, 255, 255, 0.95);
+      letter-spacing: -0.015em;
+      line-height: 1.6;
+      text-align: left;
+      word-break: keep-all;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
+    }
+
+    /* 영상 종료 후 등장하는 브랜드 카드 오버레이 (광고 스타일) */
+    #introBrandCard {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+      padding: 0 24px;
+      z-index: 54;
+      gap: 0;
+    }
+    #introBrandCard.visible { opacity: 1; pointer-events: auto; }
+
+    /* 광고 스타일 - 핵심 통계 한 줄 */
+    .brand-stat-line {
+      font-size: clamp(13px, 1.2vw, 15px);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.06em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .brand-name {
+      font-size: clamp(48px, 6vw, 76px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      margin-right: -0.22em; /* 마지막 글자의 여백을 상쇄하여 화면 정중앙에 완벽 정렬 */
+      text-align: center;
+      color: #FFFFFF;
+      margin-bottom: 18px;
+      line-height: 1;
+    }
+    .brand-desc {
+      font-size: clamp(15px, 1.5vw, 18px);
+      font-weight: 350; color: rgba(255,255,255,0.6);
+      text-align: center; line-height: 1.7;
+      max-width: 480px; letter-spacing: -0.01em;
+      margin-bottom: 38px;
+    }
+    .brand-desc strong {
+      color: rgba(255,255,255,0.9); font-weight: 500;
+    }
+    .brand-primary-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 13px 32px;
+      background: #FFFFFF;
+      color: #000000;
+      border: none; border-radius: 99px;
+      font-size: 14.5px; font-weight: 500;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,255,255,0.15);
+      transition: all 220ms ease;
+    }
+    .brand-primary-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 16px 40px rgba(255,255,255,0.32);
+    }
+
+
+        /* ─── 2. TITLE LAYER ─── */
+    #titleLayer {
+      position: absolute;
+      inset: 0; z-index: 40;
+      background: #000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+    }
+    .title-logo {
+      font-size: clamp(40px, 4.8vw, 60px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      margin-right: -0.22em; /* 마지막 글자 자간 상쇄 */
+      text-align: center;
+      color: #FFFFFF;
+      margin-bottom: 18px;
+    }
+    .title-tagline {
+      font-size: clamp(16px, 1.8vw, 22px);
+      font-weight: 350; color: rgba(255,255,255,0.65);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── 3. INTERACTION LAYER ─── */
+    #interactionLayer {
+      position: absolute;
+      inset: 0; z-index: 10;
+      opacity: 0; pointer-events: none;
+    }
+    #customerVideo {
+      position: absolute;
+      inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center 30%;
+      display: block;
+    }/* ══════════════════════════════════════════════════════════════
+       TRANSPARENT PANEL SPEAKER LOCATOR (#panelUIZone)
+       - 실제 투명판 위치: top 58%, left 4%, right 4%, bottom 5%
+       - 모든 NUNBIT UI는 이 투명판 영역 안에서만 표시
+       - 화자 화면 x좌표(51%)를 투명판 상단 경계에 투영
+       ══════════════════════════════════════════════════════════════ */
+    #panelUIZone {
+      position: absolute;
+      top: 58%;
+      left: 4%;
+      right: 4%;
+      bottom: 5%;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* 앰비언트 비네팅 (극미세 8~10% luminance 조절) */
+    #focusVignette {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(circle at 50% 36%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.08) 100%);
+      opacity: 0;
+      transition: opacity 600ms ease;
+      z-index: 12;
+    }
+    #focusVignette.active { opacity: 1; }
+
+    #hearingOverlay {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(ellipse at 50% 30%, transparent 65%, rgba(10, 15, 25, 0.08) 100%);
+      transition: opacity 400ms ease;
+      z-index: 13;
+    }
+    #hearingOverlay.active { opacity: 1; }
+
+    #vignette {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 40%, transparent 80%, rgba(0,0,0,0.1) 100%);
+      z-index: 11;
+    }
+
+    #hud {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* ─── 2. SPEAKER LOCATOR & SPEECH INFORMATION (Speaker → Locator → Meaning) ─── */
+    .speaker-locator-unit {
+      position: absolute;
+      left: 51%;
+      top: 0;
+      transform: translateX(-50%) translateY(-2px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+      opacity: 0;
+      transition:
+        opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 23;
+    }
+    .speaker-locator-unit.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* 매우 작은 downward chevron / triangle (8~10px, rgba(255,255,255,0.9), 매우 약한 glow) */
+    .locator-chevron {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 8px;
+      filter: drop-shadow(0 1px 3px rgba(255, 255, 255, 0.22));
+    }
+    .locator-chevron svg {
+      display: block;
+      width: 10px;
+      height: 8px;
+    }
+
+    /* 1px 짧은 vertical connector (16px, rgba(255,255,255,0.35)) */
+    .locator-connector {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.35);
+      margin: 0;
+    }
+
+    /* 투명판 위에 맺히는 speech surface */
+    .speech-surface {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 26px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) saturate(125%);
+      -webkit-backdrop-filter: blur(20px) saturate(125%);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-top: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      white-space: nowrap;
+    }
+
+    #speechMainText {
+      font-size: clamp(23px, 2.1vw, 26px);
+      font-weight: 500;
+      color: #FFFFFF;
+      letter-spacing: -0.015em;
+      line-height: 1.35;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+      transition: opacity 180ms ease;
+    }
+    #speechMainText strong {
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    /* ─── 3. WAITING FOR MERCHANT (체험 가이드 캡슐 — WAIT_MERCH 전용) ─── */
+    #merchantGuideCard {
+      position: absolute;
+      bottom: 4%;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 24px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px) saturate(120%);
+      -webkit-backdrop-filter: blur(18px) saturate(120%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 300ms ease, transform 300ms ease;
+      z-index: 26;
+      white-space: nowrap;
+    }
+    #merchantGuideCard.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .guide-status-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 450;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: -0.01em;
+    }
+    .guide-status-dot {
+      font-size: 8px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .guide-quote-text {
+      font-size: clamp(15px, 1.4vw, 17px);
+      font-weight: 550;
+      color: #FFFFFF;
+      letter-spacing: -0.015em;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+    }
+    .guide-action-row {
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.48);
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 1px;
+    }
+    .guide-quick-btn {
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 99px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 11px;
+      font-weight: 450;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .guide-quick-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+    }
+
+    /* ─── 5. FINALE ENDING LAYER (시네마틱 아웃트로) ─── */
+    #endingLayer {
+      position: absolute; inset: 0; z-index: 60;
+      background: #000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+      padding: 0 24px;
+    }
+    #endingLayer.visible {
+      opacity: 1; pointer-events: auto;
+    }
+    .ending-brand {
+      font-size: clamp(40px, 4.8vw, 64px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      margin-right: -0.22em; /* 마지막 글자 자간 상쇄 */
+      text-align: center;
+      color: #FFFFFF;
+      margin-bottom: 22px;
+    }
+    .ending-main-copy {
+      font-size: clamp(19px, 2.2vw, 28px);
+      font-weight: 500; color: #FFFFFF;
+      text-align: center; line-height: 1.55;
+      margin-bottom: 12px; letter-spacing: -0.02em;
+    }
+    .ending-tagline {
+      font-size: clamp(15px, 1.7vw, 20px);
+      font-weight: 350; color: rgba(255,255,255,0.6);
+      letter-spacing: 0.04em; margin-bottom: 26px;
+    }
+    .ending-desc {
+      font-size: clamp(13.5px, 1.4vw, 16px);
+      font-weight: 350; color: rgba(255,255,255,0.45);
+      text-align: center; line-height: 1.7;
+      max-width: 520px; margin-bottom: 40px;
+      letter-spacing: -0.01em;
+    }
+    .restart-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 26px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 99px;
+      color: #FFFFFF; font-size: 14px; font-weight: 450;
+      letter-spacing: 0.01em; cursor: pointer;
+      backdrop-filter: blur(16px);
+      transition: all 200ms ease;
+    }
+    .restart-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: #FFFFFF;
+      transform: translateY(-2px);
+    }
+    .restart-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* 전환 오버레이 */
+    #transitionOverlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background: #000; opacity: 0; z-index: 35;
+    }
+    #transitionOverlay.black { opacity: 1; }
+
+    /* 디버그 패널 (?debug=true) */
+    #debugPanel {
+      position: absolute; bottom: 14px; left: 14px;
+      background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px; padding: 10px 14px;
+      font-family: monospace; font-size: 11px; color: #aaa;
+      z-index: 100; pointer-events: none;
+      display: none; line-height: 1.6;
+    }
+    #debugPanel.show { display: block; }
+    #debugPanel span { color: #6ED6FF; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- 1. INTRO LAYER (전체화면 영상 + 자막 + 인포그래픽 + 브랜드 카드) -->
+  <div id="introLayer">
+    <!-- 1-A. 인트로 영상 전체화면 -->
+    <video id="introVideo" playsinline muted></video>
+
+    <!-- 1-B. 건너뛰기 버튼 (우측 상단, 극도로 미니멀) -->
+    <div class="intro-top-bar" id="introTopBar">
+      <button class="intro-skip-btn" id="btnIntroSkip">건너뛰기</button>
+    </div>
+
+
+    <!-- 1-C. 인트로 광고 카피 오버레이 (좌하단, 다큐/광고 스타일) -->
+    <div id="introSubtitleBox">
+      <div id="introSubText"></div>
+    </div>
+
+    <!-- 1-D. 영상 종료 후 브랜드 카드 (광고처럼, 핵심 정보 1개 + CTA) -->
+    <div id="introBrandCard">
+      <div class="brand-name">NUNBIT</div>
+      <div class="brand-stat-line" style="font-size: clamp(15px, 1.6vw, 19px); color: rgba(255,255,255,0.7); margin-bottom: 24px;">Stay with the person, not the noise.</div>
+      <div class="brand-desc" style="margin-bottom: 34px;">
+        시끄러운 환경에서도<br>
+        손님의 얼굴을 바라보며 대화를 이어가는<br>
+        <strong>투명 대화 보조 인터페이스</strong>
+      </div>
+      <button class="brand-primary-btn" id="btnBrandStart">
+        <span>직접 체험하기</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>
+
+    <!-- 1-E. 청각 노화 상인 데이터 인포그래픽 모달 (Glassmorphic) -->
+  </div>
+
+  <!-- 2. TITLE LAYER -->
+  <div id="titleLayer">
+    <div class="title-logo">NUNBIT</div>
+    <div class="title-tagline">Stay with the person, not the noise.</div>
+  </div>
+
+  <!-- TRANSITION OVERLAY -->
+  <div id="transitionOverlay"></div>
+
+  <!-- 3. INTERACTION LAYER -->
+  <div id="interactionLayer">
+    <video id="customerVideo" playsinline></video>
+    <div id="focusVignette"></div>
+    <div id="hearingOverlay"></div>
+    <div id="vignette"></div>
+
+    <div id="hud">
+      <!-- 실제 아크릴 투명판 위치 전용 UI 영역 (#panelUIZone: top 52%, height 38%) -->
+      <div id="panelUIZone">
+        <!-- 1. Speaker Locator & Speech Information (Speaker → Locator → Meaning) -->
+        <div id="speakerLocatorUnit" class="speaker-locator-unit">
+          <div class="locator-chevron">
+            <svg width="10" height="8" viewBox="0 0 10 8">
+              <polygon points="0,0 10,0 5,8" fill="rgba(255,255,255,0.9)" />
+            </svg>
+          </div>
+          <div class="locator-connector"></div>
+          <div id="speechInfoCard" class="speech-surface">
+            <span id="speechMainText"></span>
+          </div>
+        </div>
+
+        <!-- 2. 상인 답변 대기 상태 체험 가이드 -->
+        <div id="merchantGuideCard">
+          <div class="guide-status-row">
+            <span class="guide-status-dot">●</span>
+            <span>답변을 기다리는 중</span>
+          </div>
+          <div class="guide-quote-text">“두 마리에 만이천 원이에요.” 라고 말해보세요</div>
+          <div class="guide-action-row">
+            <span>마이크로 말하기 ·</span>
+            <button class="guide-quick-btn" id="btnQuickAnswer" title="클릭하거나 Space를 누르면 진행됩니다">Space로 진행</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 5. 시네마틱 피날레 엔딩 카드 ─── -->
+  <div id="endingLayer">
+    <div class="ending-brand">NUNBIT</div>
+    <div class="ending-main-copy">
+      소음이 아닌,<br>사람의 눈을 바라보는 대화.
+    </div>
+    <div class="ending-tagline">Stay with the person, not the noise.</div>
+    <div class="ending-desc">
+      연령성 청각 저하가 있는 상인이 시끄러운 시장 소음에 시선을 빼앗기지 않고,<br>
+      손님의 표정과 눈을 마주하며 이어가는 따뜻한 거래 경험입니다.
+    </div>
+    <button class="restart-btn" id="restartBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+      <span>다시 체험하기</span>
+    </button>
+  </div>
+
+  <!-- 디버그 패널 (?debug=true) -->
+  <div id="debugPanel">
+    <div>state:       <span id="dbState">—</span></div>
+    <div>videoTime:   <span id="dbTime">—</span></div>
+    <div>mic:         <span id="dbMic">—</span></div>
+    <div>stt:         <span id="dbStt" style="color:#ffd080">—</span></div>
+    <div>filter:      <span id="dbFilter">—</span></div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   NUNBIT v7 — REAL PRODUCT EXPERIENCE
+   - 2단 캐스케이드 580Hz 로우패스 필터로 "실제 노인성 난청" 음향 체감 극대화
+   - 손님 얼굴의 사족 텍스트 제거, 미니멀 정밀 코너 브래킷만 유지
+   - 제품 투명 디스플레이 OLED HUD (Real Glassmorphism + 고가독성)
+   - 체험 안내 메시지(플로팅 캡슐)를 제품 UI에서 완벽 분리
+   - 시네마틱 엔딩 피날레 시퀀스 & 리플레이 완성
+   ═══════════════════════════════════════════════════════════════ */
+
+const isDebug = new URLSearchParams(window.location.search).get('debug') === 'true';
+if (isDebug) {
+  document.body.classList.add('debug-mode');
+  document.getElementById('debugPanel').classList.add('show');
+}
+function db(k, v) {
+  if (!isDebug) return;
+  const el = document.getElementById('db' + k);
+  if (el) el.textContent = v;
+}
+
+const TL = {
+  speaking1Start  : 2.0,
+  speaking1End    : 5.1,
+  speaking2Start  : 16.0,
+  speaking2End    : 18.0,
+};
+
+const SPEECH_1        = '사장님, 이 고등어 얼마예요?';
+const SPEECH_2        = '그럼 좋은 걸로 두 마리 주세요.';
+const SEMANTIC_2_HTML = '<span class="accent">고등어 2마리</span> · 12,000원 (주문 확정)';
+
+/* ── States ── */
+const S = {
+  INTRO      : 'INTRO',
+  TITLE      : 'TITLE',
+  C_IDLE     : 'C_IDLE',
+  C_SPEAK_1  : 'C_SPEAK_1',
+  WAIT_MERCH : 'WAIT_MERCH',
+  MERCH_DET  : 'MERCH_DET',
+  C_SPEAK_2  : 'C_SPEAK_2',
+  SEMANTIC_2 : 'SEMANTIC_2',
+  ENDING     : 'ENDING',
+};
+
+let state         = S.INTRO;
+let handled       = {};
+let merchantDone  = false;
+let micAvailable  = false;
+let micActive     = false;
+let recognition   = null;
+let timers        = [];
+
+function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+function later(fn, ms) {
+  const id = setTimeout(() => { timers = timers.filter(t => t !== id); fn(); }, ms);
+  timers.push(id); return id;
+}
+function setState(next) {
+  state = next; db('State', next); onEnter(next);
+}
+
+/* ── DOM Elements ── */
+const introLayer             = document.getElementById('introLayer');
+const introVideo             = document.getElementById('introVideo');
+const introTopBar            = document.getElementById('introTopBar');
+const btnIntroSkip           = document.getElementById('btnIntroSkip');
+const introSubtitleBox       = document.getElementById('introSubtitleBox');
+const introSubText           = document.getElementById('introSubText');
+const introBrandCard         = document.getElementById('introBrandCard');
+const btnBrandStart          = document.getElementById('btnBrandStart');
+
+const titleLayer             = document.getElementById('titleLayer');
+const iLayer                 = document.getElementById('interactionLayer');
+const vid                    = document.getElementById('customerVideo');
+const focusVignette          = document.getElementById('focusVignette');
+const hOverlay               = document.getElementById('hearingOverlay');
+const panelUIZone            = document.getElementById('panelUIZone');
+const speakerLocatorUnit     = document.getElementById('speakerLocatorUnit');
+const speechMainText         = document.getElementById('speechMainText');
+const merchantGuideCard      = document.getElementById('merchantGuideCard');
+const btnQuickAnswer         = document.getElementById('btnQuickAnswer');
+const endingLayer            = document.getElementById('endingLayer');
+const restartBtn             = document.getElementById('restartBtn');
+const tOverlay               = document.getElementById('transitionOverlay');
+
+/* ── Speaker Localization Anchor (Customer video screen x ≈ 51%) ── */
+// 프로토타입 기준 고정 화자 투영 앵커 (panelUIZone 상단 경계 x=51%)
+const speakerAnchor = { x: 51.0 };
+
+/* ════════════════════════════════════════════
+   1. 현실적인 고도 노인성 난청(Presbycusis) 오디오 필터
+   - 2단 캐스케이드 로우패스 (580Hz + 680Hz): 700Hz 이상 자음 탈락, 웅얼거림 극대화
+   - 원본 패스(normalGain) 100% 완전 소거
+   - 시장 핑크 노이즈 게인 증폭으로 SNR 대폭 악화
+   ════════════════════════════════════════════ */
+let audioCtx     = null;
+let filterGain   = null;
+let normalGain   = null;
+let filterActive = false;
+
+function initAudio() {
+  if (audioCtx) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const src = audioCtx.createMediaElementSource(vid);
+
+    // 1. 정상 패스
+    normalGain = audioCtx.createGain();
+    normalGain.gain.value = 1.0;
+    src.connect(normalGain);
+    normalGain.connect(audioCtx.destination);
+
+    // 2. 2단 캐스케이드 로우패스 필터 체인 (강력한 고주파 차단)
+    const lp1 = audioCtx.createBiquadFilter();
+    lp1.type = 'lowpass'; lp1.frequency.value = 580; lp1.Q.value = 1.5;
+
+    const lp2 = audioCtx.createBiquadFilter();
+    lp2.type = 'lowpass'; lp2.frequency.value = 680; lp2.Q.value = 1.0;
+
+    const hp = audioCtx.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 220; hp.Q.value = 0.7;
+
+    const dist = audioCtx.createWaveShaper();
+    dist.curve = makeDistCurve(28);
+    dist.oversample = '2x';
+
+    filterGain = audioCtx.createGain();
+    filterGain.gain.value = 0.0;
+
+    // 시장 핑크 노이즈 (소음 중첩)
+    const bufLen = audioCtx.sampleRate * 2;
+    const nBuf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+    const nd = nBuf.getChannelData(0);
+    let b = [0,0,0,0,0,0,0];
+    for (let i = 0; i < bufLen; i++) {
+      const w = Math.random()*2-1;
+      b[0] = 0.99886*b[0] + w*0.0555179; b[1] = 0.99332*b[1] + w*0.0750759;
+      b[2] = 0.96900*b[2] + w*0.1538520; b[3] = 0.86650*b[3] + w*0.3104856;
+      b[4] = 0.55000*b[4] + w*0.5329522; b[5] = -0.7616*b[5] - w*0.0168980;
+      nd[i] = (b[0]+b[1]+b[2]+b[3]+b[4]+b[5]+b[6]+w*0.5362)*0.035;
+      b[6] = w*0.115926;
+    }
+    const noiseNode = audioCtx.createBufferSource();
+    noiseNode.buffer = nBuf;
+    noiseNode.loop = true;
+
+    const nLp = audioCtx.createBiquadFilter();
+    nLp.type = 'bandpass'; nLp.frequency.value = 1200; nLp.Q.value = 0.8;
+    const nGain = audioCtx.createGain();
+    nGain.gain.value = 0.0;
+
+    noiseNode.connect(nLp);
+    nLp.connect(nGain);
+    nGain.connect(audioCtx.destination);
+    noiseNode.start();
+
+    // 체인 연결
+    src.connect(lp1);
+    lp1.connect(lp2);
+    lp2.connect(hp);
+    hp.connect(dist);
+    dist.connect(filterGain);
+    filterGain.connect(audioCtx.destination);
+
+    audioCtx._nGain = nGain;
+  } catch(e) {
+    db('Audio', 'init err: ' + e.message);
+  }
+}
+
+function makeDistCurve(amount) {
+  const n = 256, curve = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = (i * 2) / n - 1;
+    curve[i] = ((Math.PI + amount) * x) / (Math.PI + amount * Math.abs(x));
+  }
+  return curve;
+}
+
+function filterOn() {
+  filterActive = true;
+  db('Filter', 'ACTIVE (Heavy Lowpass)');
+  hOverlay.classList.add('active');
+
+  if (normalGain && filterGain && audioCtx) {
+    const t = audioCtx.currentTime;
+    normalGain.gain.cancelScheduledValues(t);
+    filterGain.gain.cancelScheduledValues(t);
+    normalGain.gain.linearRampToValueAtTime(0.0, t + 0.12);
+    filterGain.gain.linearRampToValueAtTime(3.4, t + 0.12);
+    if (audioCtx._nGain) {
+      audioCtx._nGain.gain.cancelScheduledValues(t);
+      audioCtx._nGain.gain.linearRampToValueAtTime(0.35, t + 0.12);
+    }
+  }
+}
+
+function filterOff() {
+  filterActive = false;
+  db('Filter', 'OFF (Normal Audio)');
+  hOverlay.classList.remove('active');
+
+  if (normalGain && filterGain && audioCtx) {
+    const t = audioCtx.currentTime;
+    normalGain.gain.cancelScheduledValues(t);
+    filterGain.gain.cancelScheduledValues(t);
+    normalGain.gain.linearRampToValueAtTime(1.0, t + 0.12);
+    filterGain.gain.linearRampToValueAtTime(0.0, t + 0.12);
+    if (audioCtx._nGain) {
+      audioCtx._nGain.gain.cancelScheduledValues(t);
+      audioCtx._nGain.gain.linearRampToValueAtTime(0.0, t + 0.12);
+    }
+  }
+}
+
+/* ════════════════════════════════════════════
+   2. 상인 마이크 음성 자동 인식 (고감도 RMS VAD + STT + 원터치 버튼)
+   ════════════════════════════════════════════ */
+let micStream       = null;
+let micCtx          = null;
+let micAnalyser     = null;
+let silenceTimer    = null;
+let lastSpokenText  = '';
+let hasHeardSpeech  = false;
+let vadCounter      = 0;
+
+async function initMic() {
+  if (micStream && micAnalyser) return true;
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    micAvailable = true;
+    micCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (micCtx.state === 'suspended') await micCtx.resume();
+
+    const src = micCtx.createMediaStreamSource(micStream);
+    micAnalyser = micCtx.createAnalyser();
+    micAnalyser.fftSize = 256;
+    micAnalyser.smoothingTimeConstant = 0.5;
+    src.connect(micAnalyser);
+    db('Mic', 'ready');
+    return true;
+  } catch(e) {
+    micAvailable = false;
+    db('Mic', 'denied/unavail: ' + e.message);
+    return false;
+  }
+}
+
+function startMerchantSTT() {
+  hasHeardSpeech = false;
+  lastSpokenText = '';
+  vadCounter = 0;
+  micActive = true;
+
+  // 1. Web Speech API (지원 시 한국어 STT)
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) {
+    try {
+      if (recognition) {
+        try { recognition.abort(); } catch(e) {}
+      }
+      recognition = new SR();
+      recognition.lang = 'ko-KR';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        db('Mic', 'STT listening');
+        console.log('[STT] Recognition started');
+      };
+
+      recognition.onresult = (e) => {
+        let interim = '', final = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const t = e.results[i][0].transcript;
+          e.results[i].isFinal ? final += t : interim += t;
+        }
+
+        const heard = (final || interim).trim();
+        if (heard) {
+          lastSpokenText = heard;
+          console.log('[STT Result]', heard);
+          db('Stt', heard);
+
+          // 유연한 가격/수량 키워드 감지 즉시 반응 (VAD 타이머 지연 없이 즉각 트리거)
+          if (isKeyResponse(heard)) {
+            hasHeardSpeech = true;
+            console.log('[STT Matched]', heard);
+            triggerMerchantDone(heard);
+            return;
+          }
+        }
+      };
+
+      recognition.onerror = (err) => {
+        console.warn('[STT Error]', err.error);
+        db('Mic', 'err:' + err.error);
+      };
+
+      recognition.onend = () => {
+        if (micActive && !merchantDone && (state === S.WAIT_MERCH || state === S.C_SPEAK_1)) {
+          try { recognition.start(); } catch(ex) {}
+        }
+      };
+
+      recognition.start();
+    } catch(e) {
+      console.warn('[STT Start Error]', e);
+      db('Mic', 'start err: ' + e.message);
+    }
+  }
+
+  // 2. RMS VAD 및 미니 파형 애니메이션
+  animateMic();
+}
+
+function stopMerchantSTT() {
+  micActive = false;
+  clearTimeout(silenceTimer);
+  silenceTimer = null;
+  if (recognition) {
+    try { recognition.abort(); } catch(e) {}
+    recognition = null;
+  }
+  cancelAnimationFrame(window._miRaf);
+  lwBars.forEach(b => { if (b) b.style.height = '5px'; });
+}
+
+function isKeyResponse(text) {
+  if (!text || text.trim().length < 1) return false;
+
+  const t = text
+    .replace(/\s+/g, '')
+    .replace(/,/g, '');
+
+  // 단순 인사/추임새 단독 발화 제외 (노이즈 방지)
+  if (/^(네|예|응|어|아|네네|안녕하세요|여보세요)$/.test(t)) return false;
+
+  // 1. 숫자 가격 (예: 10000, 12000, 15000, 20000, 30000, 5000 등 3~6자리 숫자)
+  const hasNumericPrice = /\d{3,6}원?/.test(t);
+
+  // 2. 한국어 가격 표현 (예: 만원, 이만원, 삼만원, 만이천원, 만오천원, 만팔천원, 칠천원, 오천원 등)
+  const hasKoreanPrice =
+    /(일|이|삼|사|오|육|칠|팔|구)?만([일이삼사오육칠팔구\d]천)?원?/.test(t)
+    || /[일이삼사오육칠팔구\d]?[천만]원/.test(t);
+
+  // 3. 수량 + 가격 맥락 (예: 한 마리, 두 마리, 세 마리, 두 개 등 + 원 / 천 / 만 단위)
+  const hasQuantity = /(한|두|세|네|다섯|\d+)(마리|개)/.test(t);
+  const hasPriceUnit = /(원|천|만)/.test(t);
+
+  return hasNumericPrice || hasKoreanPrice || (hasQuantity && hasPriceUnit);
+}
+
+function animateMic() {
+  if (!micAnalyser) return;
+
+  const timeBuf = new Uint8Array(micAnalyser.fftSize);
+  const freqBuf = new Uint8Array(micAnalyser.frequencyBinCount);
+
+  function tick() {
+    if (!micActive) return;
+
+    micAnalyser.getByteTimeDomainData(timeBuf);
+    let sumSquares = 0;
+    for (let i = 0; i < timeBuf.length; i++) {
+      const norm = (timeBuf[i] - 128) / 128;
+      sumSquares += norm * norm;
+    }
+    const rms = Math.sqrt(sumSquares / timeBuf.length);
+
+    micAnalyser.getByteFrequencyData(freqBuf);
+    const highFreqSum = freqBuf.slice(4, 30).reduce((a, b) => a + b, 0) / 26;
+    const isVoiceDetected = rms > 0.035 || highFreqSum > 35;
+
+    if (hasHeardSpeech || isKeyResponse(lastSpokenText)) {
+      if (!merchantDone) {
+        triggerMerchantDone(lastSpokenText);
+        return;
+      }
+    }
+
+    window._miRaf = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function triggerMerchantDone(recognizedText) {
+  if (merchantDone) return;
+  merchantDone = true;
+  console.log('[triggerMerchantDone]', recognizedText, '| state:', state);
+
+  stopMerchantSTT();
+
+  if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
+  if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
+  if (focusVignette) focusVignette.classList.remove('active');
+  filterOff();
+
+  // state 업데이트 후 영상 이동
+  state = S.MERCH_DET;
+  db('State', S.MERCH_DET);
+
+  vid.currentTime = 13.8;
+  vid.play().then(() => {
+    console.log('[vid.play] resumed at 13.8s');
+  }).catch(err => {
+    console.warn('[vid.play failed] - needs user gesture?', err);
+  });
+}
+
+// 직접 대답하기 버튼 클릭 핸들러 (원터치 Space 폴백 지원)
+btnQuickAnswer.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (merchantDone) return;
+  merchantDone = true;
+  stopMerchantSTT();
+  if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
+  if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
+  if (focusVignette) focusVignette.classList.remove('active');
+  filterOff();
+  state = S.MERCH_DET;
+  db('State', S.MERCH_DET);
+  vid.currentTime = 13.8;
+  vid.play().catch(err => console.warn('[btnQuickAnswer play err]', err));
+});
+
+/* ════════════════════════════════════════════
+   3. UI 애니메이션 헬퍼
+   ════════════════════════════════════════════ */
+function animateIdle(bars, rafKey, bases, amps, spds) {
+  cancelAnimationFrame(window[rafKey]);
+  let t = 0;
+  function tick() {
+    t += 0.045;
+    bars.forEach((b, i) => {
+      if (b) {
+        const h = bases[i] + Math.sin(t * spds[i] + i * 1.2) * amps[i];
+        b.style.height = `${Math.max(3, h)}px`;
+      }
+    });
+    window[rafKey] = requestAnimationFrame(tick);
+  }
+  tick();
+}
+function stopIdle(rafKey) {
+  cancelAnimationFrame(window[rafKey]);
+}
+
+function fadeBlack(on, dur = 700) {
+  return new Promise(r => {
+    tOverlay.style.transition = `opacity ${dur}ms ease`;
+    tOverlay.classList.toggle('black', on);
+    setTimeout(r, dur);
+  });
+}
+
+/* ════════════════════════════════════════════
+   4. 인트로 광고 커피 오버레이 (좌하단 다큐/광고 스타일)
+   ════════════════════════════════════════════ */
+const INTRO_SUBS = [
+  { s: 0.5,  e: 4.2,  t: '사람의 목소리와 시장 소음이 겹치는 순간' },
+  { s: 4.5,  e: 8.5,  t: '나이가 들수록 소음 속 말소리를 구분하기 어려워집니다' },
+  { s: 8.8,  e: 12.8, t: '한 번의 질문이 여러 번의 되묻기로 이어지고' },
+  { s: 13.1, e: 17.0, t: '시선은 사람보다 소리를 확인하는 데 머물게 됩니다' },
+  { s: 17.3, e: 21.0, t: '소음이 아닌, 사람에게 시선을 머물 수 있도록' },
+];
+
+let currentSubIdx = -1;
+let introTypeTimer = null;
+
+// 인트로 카피 타자기 이펝트
+function introTypeIn(text) {
+  clearTimeout(introTypeTimer);
+  introSubText.textContent = '';
+  let i = 0;
+  function next() {
+    if (i <= text.length) {
+      introSubText.textContent = text.slice(0, i++);
+      introTypeTimer = setTimeout(next, 38 + (Math.random() * 18 - 9));
+    }
+  }
+  next();
+}
+
+introVideo.addEventListener('timeupdate', () => {
+  if (state !== S.INTRO) return;
+  const t = introVideo.currentTime;
+  const idx = INTRO_SUBS.findIndex(sub => t >= sub.s && t < sub.e);
+
+  if (idx === currentSubIdx) return;
+  currentSubIdx = idx;
+
+  if (idx >= 0) {
+    introSubtitleBox.classList.add('visible');
+    introTypeIn(INTRO_SUBS[idx].t);
+  } else {
+    clearTimeout(introTypeTimer);
+    introSubtitleBox.classList.remove('visible');
+  }
+});
+
+
+
+// 인트로 건너뛰기
+btnIntroSkip.addEventListener('click', (e) => {
+  e.stopPropagation();
+  introVideo.pause();
+  introSubtitleBox.classList.remove('visible');
+  introBrandCard.classList.add('visible');
+});
+
+// 직접 체험 시작하기 (마이크 권한 획득 트리거)
+async function startDirectExperience() {
+  // 버튼 클릭 즉시 부드럽게 블랙 페이드
+  tOverlay.style.transition = 'opacity 400ms ease';
+  tOverlay.classList.add('black');
+
+  introVideo.pause();
+  introBrandCard.classList.remove('visible');
+  introLayer.style.display = 'none';
+
+  try {
+    await initMic();
+  } catch(e) {}
+
+  // 중복된 2.2초 로고 타이틀 화면(S.TITLE)을 건너뛰고 곧바로 손님 인터랙션으로 진입
+  setState(S.C_IDLE);
+}
+
+btnBrandStart.addEventListener('click', (e) => {
+  e.stopPropagation();
+  startDirectExperience();
+});
+
+/* ════════════════════════════════════════════
+   5. 고객 인터랙션 영상 timeupdate
+   ════════════════════════════════════════════ */
+vid.addEventListener('timeupdate', () => {
+  const t = vid.currentTime;
+  db('Time', t.toFixed(2));
+
+  // [C_IDLE] → [C_SPEAK_1] 손님 첫 질문 (2.0s)
+  if (state === S.C_IDLE && t >= TL.speaking1Start && !handled.sp1) {
+    handled.sp1 = true;
+    setState(S.C_SPEAK_1);
+  }
+
+  // [C_SPEAK_1] 손님 질문 종료 (4.85s) → 정확하게 비디오 PAUSE!
+  if (state === S.C_SPEAK_1 && t >= TL.speaking1End && !handled.pause1) {
+    handled.pause1 = true;
+    vid.pause();
+    db('Time', `PAUSED @ ${t.toFixed(2)}`);
+    setState(S.WAIT_MERCH);
+  }
+
+  // [MERCH_DET 이후 영상 재개] → 손님 2차 주문 (16.0s)
+  if (state === S.MERCH_DET && t >= TL.speaking2Start && !handled.sp2) {
+    handled.sp2 = true;
+    setState(S.C_SPEAK_2);
+  }
+
+  // [C_SPEAK_2] 손님 주문 완료 (18.0s) → 주문 확정 및 피날레 시퀀스
+  if (state === S.C_SPEAK_2 && t >= TL.speaking2End && !handled.pause2) {
+    handled.pause2 = true;
+    setState(S.SEMANTIC_2);
+  }
+});
+
+/* ════════════════════════════════════════════
+   6. STATE MACHINE (핵심 전환 및 피날레)
+   ════════════════════════════════════════════ */
+async function onEnter(s) {
+  switch(s) {
+
+    case S.INTRO: {
+      introLayer.style.opacity = '1';
+      introLayer.style.display = 'block';
+      titleLayer.style.opacity = '0';
+      iLayer.style.opacity = '0';
+      endingLayer.classList.remove('visible');
+      introBrandCard.classList.remove('visible');
+      introSubtitleBox.classList.remove('visible');
+      
+      if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
+      if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
+
+      introVideo.src = 'intro.mp4';
+      introVideo.currentTime = 0;
+      introVideo.muted = false;
+      introVideo.volume = 1.0;
+
+      introVideo.play().catch(() => {
+        introLayer.style.cursor = 'pointer';
+        const handler = () => {
+          introVideo.play();
+          introLayer.removeEventListener('click', handler);
+        };
+        introLayer.addEventListener('click', handler, { once: true });
+      });
+
+      introVideo.onended = () => {
+        if (state !== S.INTRO) return;
+        introSubtitleBox.classList.remove('visible');
+        introBrandCard.classList.add('visible');
+      };
+      break;
+    }
+
+    case S.TITLE: {
+      await fadeBlack(true, 400);
+      introLayer.style.display = 'none';
+      setState(S.C_IDLE);
+      break;
+    }
+
+    case S.C_IDLE: {
+      titleLayer.style.opacity = '0';
+      handled = {};
+      merchantDone = false;
+
+      vid.src = 'customer.mp4';
+      vid.currentTime = 0;
+
+      await new Promise(r => setTimeout(r, 40));
+      iLayer.style.transition = 'opacity 600ms ease';
+      iLayer.style.opacity = '1';
+      iLayer.style.pointerEvents = 'auto';
+
+      
+      if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
+      if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
+      if (focusVignette) focusVignette.classList.remove('active');
+
+      tOverlay.style.transition = 'opacity 500ms ease';
+      tOverlay.classList.remove('black');
+
+      const playPromise = vid.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          initAudio();
+          initMic();
+        }).catch(() => {
+          document.addEventListener('click', function unlock() {
+            vid.play();
+            initAudio();
+            initMic();
+            document.removeEventListener('click', unlock);
+          }, { once: true });
+        });
+      }
+      break;
+    }
+
+    case S.C_SPEAK_1: {
+      // Speaker → Locator → Meaning: 상단 투영 로케이터 + 발화 텍스트 활성화
+      if (focusVignette) focusVignette.classList.add('active');
+      if (speechMainText) {
+        speechMainText.style.opacity = '1';
+        speechMainText.textContent = SPEECH_1;
+      }
+      if (speakerLocatorUnit) speakerLocatorUnit.classList.add('visible');
+      if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
+
+      filterOn();
+      break;
+    }
+
+    case S.WAIT_MERCH: {
+      // 1. 상태 진입 즉시 마이크 STT 리스닝 활성화 (0초 지연으로 즉각 음성 캡처)
+      merchantDone = false;
+      startMerchantSTT();
+
+      // 2. 손님 첫 대사 종료(5.1s) → 450ms 후 같은 위치에서 자연스럽게 제자리 축약
+      later(() => {
+        if (speechMainText && state === S.WAIT_MERCH) {
+          speechMainText.style.opacity = '0';
+          later(() => {
+            speechMainText.innerHTML = '<strong>고등어 · 가격 문의</strong>';
+            speechMainText.style.opacity = '1';
+          }, 180);
+        }
+      }, 450);
+
+      // 3. 약 1.4초 후: speech surface + locator 함께 fade out
+      later(() => {
+        if (speakerLocatorUnit && state === S.WAIT_MERCH) {
+          speakerLocatorUnit.classList.remove('visible');
+        }
+        if (focusVignette) focusVignette.classList.remove('active');
+        filterOff();
+
+        // 화자 정보 사라진 뒤 panelUIZone 하단에 체험 가이드 표시
+        later(() => {
+          if (merchantGuideCard && state === S.WAIT_MERCH) {
+            merchantGuideCard.classList.add('visible');
+          }
+        }, 200);
+      }, 1850);
+      break;
+    }
+
+    case S.MERCH_DET: {
+      // triggerMerchantDone에서 직접 vid.play()를 호출하므로 여기서는 아무것도 하지 않음
+      // (autoplay policy: user gesture context는 triggerMerchantDone 또는 keydown에서 보장됨)
+      break;
+    }
+
+    case S.C_SPEAK_2: {
+      // 손님 재발화: 동일 speaker locator가 같은 x 위치(51%)에 다시 나타남
+      if (focusVignette) focusVignette.classList.add('active');
+      if (speechMainText) {
+        speechMainText.style.opacity = '1';
+        speechMainText.textContent = SPEECH_2;
+      }
+      if (speakerLocatorUnit) speakerLocatorUnit.classList.add('visible');
+      if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
+
+      filterOn();
+      break;
+    }
+
+    case S.SEMANTIC_2: {
+      // 발화 종료(18.0s) → 450ms 후 제자리 축약: "고등어 · 2마리"
+      later(() => {
+        if (speechMainText) {
+          speechMainText.style.opacity = '0';
+          later(() => {
+            speechMainText.innerHTML = '<strong>고등어 · 2마리</strong>';
+            speechMainText.style.opacity = '1';
+          }, 180);
+        }
+      }, 450);
+
+      // 약 1.6초 후 locator와 UI 모두 fade out
+      later(() => {
+        if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
+        if (focusVignette) focusVignette.classList.remove('active');
+        filterOff();
+
+        // 투명판 너머 손님 얼굴만 잠시 머물다 엔딩 레이어 전환
+        later(async () => {
+          await fadeBlack(true, 800);
+          vid.pause();
+          setState(S.ENDING);
+        }, 1200);
+      }, 2000);      break;
+    }
+
+    case S.ENDING: {
+      db('State', 'ENDING — Finale');
+      endingLayer.classList.add('visible');
+      await fadeBlack(false, 700);
+      break;
+    }
+  }
+}
+
+/* ── 다시 체험하기 리플레이 핸들러 ── */
+restartBtn.addEventListener('click', async () => {
+  await fadeBlack(true, 600);
+  endingLayer.classList.remove('visible');
+  introLayer.style.display = 'block';
+  introLayer.style.opacity = '1';
+  await fadeBlack(false, 500);
+  setState(S.INTRO);
+});
+
+// 키보드 Space / Enter 핸들러
+document.addEventListener('keydown', (e) => {
+  if (e.code !== 'Space' && e.code !== 'Enter') return;
+  e.preventDefault();
+
+  // 1. 인트로 화면인 경우
+  if (state === S.INTRO) {
+    if (introBrandCard.classList.contains('visible')) {
+      startDirectExperience();
+    } else {
+      introVideo.pause();
+      introSubtitleBox.classList.remove('visible');
+      introBrandCard.classList.add('visible');
+    }
+    return;
+  }
+
+  // 2. 손님 발화 중 or 상인 대기 중 → Space는 항상 user gesture 컨텍스트에서 즉시 vid.play()
+  if (state === S.C_IDLE || state === S.C_SPEAK_1 || state === S.WAIT_MERCH) {
+    console.log('[Space] state =', state, '→ direct play to 13.8s');
+    vid.pause();
+    merchantDone = true;              // 이중 실행 방지
+    stopMerchantSTT();
+    if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
+    if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
+    if (focusVignette) focusVignette.classList.remove('active');
+    filterOff();
+    state = S.MERCH_DET;
+    db('State', S.MERCH_DET);
+    vid.currentTime = 13.8;           // user gesture context 안에서 직접 실행 → autoplay 허용
+    vid.play().then(() => {
+      console.log('[Space] play resumed 13.8s ✓');
+    }).catch(err => {
+      console.warn('[Space] play failed:', err);
+    });
+    return;
+  }
+});
+
+/* ── BOOT ── */
+window.addEventListener('load', () => setState(S.INTRO));
+</script>
+</body>
+</html>
