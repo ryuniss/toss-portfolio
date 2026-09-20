@@ -328,46 +328,47 @@
     /* ─── 3. WAITING FOR MERCHANT (투명 OLED HUD 일체형 인터페이스) ─── */
     #merchantGuideCard {
       position: absolute;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      display: flex;
+      top: 24px;
+      left: 51%; /* 화자 투영 앵커와 동일한 x좌표로 완벽 일체화 */
+      transform: translateX(-50%) translateY(0);
+      display: inline-flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      padding: 10px 26px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px) saturate(125%);
-      -webkit-backdrop-filter: blur(20px) saturate(125%);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      border-top: 1px solid rgba(255, 255, 255, 0.38);
-      border-radius: 16px;
+      justify-content: center;
+      gap: 5px;
+      padding: 11px 26px;
+      background: rgba(255, 255, 255, 0.08) !important;
+      backdrop-filter: blur(20px) saturate(125%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(125%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.38) !important;
+      border-radius: 15px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 280ms ease, transform 280ms ease, background 200ms ease, border-color 200ms ease;
+      transition: opacity 280ms ease, transform 280ms ease, background 200ms ease;
       z-index: 30;
       white-space: nowrap;
       cursor: pointer;
       user-select: none;
     }
     #merchantGuideCard:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.38);
+      background: rgba(255, 255, 255, 0.14) !important;
+      border-color: rgba(255, 255, 255, 0.35) !important;
     }
     #merchantGuideCard.visible {
       opacity: 1;
       pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
     }
     #merchantGuideCard.matched {
-      background: rgba(46, 160, 67, 0.18) !important;
-      border-color: rgba(86, 211, 100, 0.6) !important;
+      background: rgba(46, 160, 67, 0.22) !important;
+      border-color: rgba(86, 211, 100, 0.65) !important;
+      box-shadow: 0 0 24px rgba(86, 211, 100, 0.3) !important;
     }
 
     .hud-guide-main {
-      font-size: clamp(21px, 2.0vw, 25px);
-      font-weight: 550;
+      font-size: clamp(22px, 2.0vw, 25px);
+      font-weight: 500;
       color: #FFFFFF;
       letter-spacing: -0.015em;
       line-height: 1.35;
@@ -377,11 +378,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 450;
-      color: rgba(255, 255, 255, 0.62);
+      color: rgba(255, 255, 255, 0.58);
       letter-spacing: -0.01em;
-      transition: color 200ms ease;
     }
     .hud-guide-sub.hearing {
       color: #79B8FF;
@@ -775,10 +775,11 @@ function filterOn() {
     normalGain.gain.cancelScheduledValues(t);
     filterGain.gain.cancelScheduledValues(t);
     normalGain.gain.linearRampToValueAtTime(0.0, t + 0.12);
-    filterGain.gain.linearRampToValueAtTime(3.4, t + 0.12);
+    // 고객 음성 볼륨을 귀가 아프지 않은 편안한 적정 레벨(1.15)로 조정 (기존 3.4배 과도한 증폭 해소)
+    filterGain.gain.linearRampToValueAtTime(1.15, t + 0.12);
     if (audioCtx._nGain) {
       audioCtx._nGain.gain.cancelScheduledValues(t);
-      audioCtx._nGain.gain.linearRampToValueAtTime(0.35, t + 0.12);
+      audioCtx._nGain.gain.linearRampToValueAtTime(0.12, t + 0.12);
     }
   }
 }
@@ -792,7 +793,7 @@ function filterOff() {
     const t = audioCtx.currentTime;
     normalGain.gain.cancelScheduledValues(t);
     filterGain.gain.cancelScheduledValues(t);
-    normalGain.gain.linearRampToValueAtTime(1.0, t + 0.12);
+    normalGain.gain.linearRampToValueAtTime(0.75, t + 0.12);
     filterGain.gain.linearRampToValueAtTime(0.0, t + 0.12);
     if (audioCtx._nGain) {
       audioCtx._nGain.gain.cancelScheduledValues(t);
@@ -1217,6 +1218,7 @@ async function onEnter(s) {
 
       vid.src = 'customer.mp4';
       vid.currentTime = 0;
+      vid.volume = 0.7;
 
       await new Promise(r => setTimeout(r, 40));
       iLayer.style.transition = 'opacity 600ms ease';
