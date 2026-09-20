@@ -295,34 +295,53 @@
       margin: 0;
     }
 
-    /* 투명판 위에 맺히는 speech surface */
+    /* 투명판 위에 맺히는 speech surface (원문 유지 + 하단 대형 축약 텍스트 2단 구조) */
     .speech-surface {
       display: inline-flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 11px 26px;
+      gap: 5px;
+      padding: 11px 26px 13px 26px;
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px) saturate(125%);
       -webkit-backdrop-filter: blur(20px) saturate(125%);
       border: 1px solid rgba(255, 255, 255, 0.22);
       border-top: 1px solid rgba(255, 255, 255, 0.38);
-      border-radius: 15px;
+      border-radius: 17px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
       white-space: nowrap;
+      transition: all 260ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    #speechMainText {
-      font-size: clamp(23px, 2.1vw, 26px);
-      font-weight: 500;
+    /* 1. 손님이 실제 말한 내용 (상단에 온전히 유지) */
+    .speech-raw-text {
+      font-size: clamp(14px, 1.3vw, 16px);
+      font-weight: 450;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+      transition: opacity 200ms ease;
+    }
+
+    /* 2. 하단 핵심 축약 요약 (폰트 크기를 훨씬 크고 굵게 강조) */
+    .speech-summary-text {
+      font-size: clamp(23px, 2.1vw, 27px);
+      font-weight: 650;
       color: #FFFFFF;
       letter-spacing: -0.015em;
-      line-height: 1.35;
-      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
-      transition: opacity 180ms ease;
+      line-height: 1.25;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 260ms ease, transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+      display: none;
     }
-    #speechMainText strong {
-      font-weight: 600;
-      color: #FFFFFF;
+    .speech-summary-text.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* ─── 3. WAITING FOR MERCHANT (투명 OLED HUD 일체형 인터페이스) ─── */
@@ -553,7 +572,8 @@
           </div>
           <div class="locator-connector"></div>
           <div id="speechInfoCard" class="speech-surface">
-            <span id="speechMainText"></span>
+            <div id="speechRawText" class="speech-raw-text"></div>
+            <div id="speechSummaryText" class="speech-summary-text"></div>
           </div>
         </div>
 
@@ -681,7 +701,8 @@ const focusVignette          = document.getElementById('focusVignette');
 const hOverlay               = document.getElementById('hearingOverlay');
 const panelUIZone            = document.getElementById('panelUIZone');
 const speakerLocatorUnit     = document.getElementById('speakerLocatorUnit');
-const speechMainText         = document.getElementById('speechMainText');
+const speechRawText         = document.getElementById('speechRawText');
+const speechSummaryText     = document.getElementById('speechSummaryText');
 const merchantGuideCard      = document.getElementById('merchantGuideCard');
 const btnQuickAnswer         = document.getElementById('btnQuickAnswer');
 const guideStatusLabel       = document.getElementById('guideStatusLabel');
@@ -1274,11 +1295,15 @@ async function onEnter(s) {
     }
 
     case S.C_SPEAK_1: {
-      // Speaker → Locator → Meaning: 상단 투영 로케이터 + 발화 텍스트 활성화
+      // Speaker → Locator → Meaning: 상단 투영 로케이터 + 원문 텍스트 활성화
       if (focusVignette) focusVignette.classList.add('active');
-      if (speechMainText) {
-        speechMainText.style.opacity = '1';
-        speechMainText.textContent = SPEECH_1;
+      if (speechRawText) {
+        speechRawText.style.opacity = '1';
+        speechRawText.textContent = SPEECH_1;
+      }
+      if (speechSummaryText) {
+        speechSummaryText.classList.remove('visible');
+        speechSummaryText.textContent = '';
       }
       if (speakerLocatorUnit) speakerLocatorUnit.classList.add('visible');
       if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
@@ -1291,18 +1316,15 @@ async function onEnter(s) {
       merchantDone = false;
       startMerchantSTT();
 
-      // 2. 손님 첫 대사 종료(5.1s) → 450ms 후 같은 위치에서 자연스럽게 제자리 축약
+      // 2. 손님 첫 대사 종료(5.1s) → 원문은 상단에 그대로 유지되고, 400ms 후 그 밑에 폰트가 더 큰 핵심 요약 표시!
       later(() => {
-        if (speechMainText && state === S.WAIT_MERCH) {
-          speechMainText.style.opacity = '0';
-          later(() => {
-            speechMainText.innerHTML = '<strong>고등어 · 가격 문의</strong>';
-            speechMainText.style.opacity = '1';
-          }, 180);
+        if (state === S.WAIT_MERCH && speechSummaryText) {
+          speechSummaryText.textContent = '고등어 · 가격 문의';
+          speechSummaryText.classList.add('visible');
         }
-      }, 450);
+      }, 400);
 
-      // 3. 약 1.4초 후: speech surface + locator 함께 fade out
+      // 3. 약 1.8초 후: speech surface + locator 함께 fade out 되고 상인 대답 큐 표시
       later(() => {
         if (speakerLocatorUnit && state === S.WAIT_MERCH) {
           speakerLocatorUnit.classList.remove('visible');
@@ -1310,13 +1332,12 @@ async function onEnter(s) {
         if (focusVignette) focusVignette.classList.remove('active');
         filterOff();
 
-        // 화자 정보 사라진 뒤 panelUIZone 하단에 체험 가이드 표시
         later(() => {
           if (merchantGuideCard && state === S.WAIT_MERCH) {
             merchantGuideCard.classList.add('visible');
           }
-        }, 200);
-      }, 1850);
+        }, 180);
+      }, 2000);
       break;
     }
 
@@ -1329,9 +1350,13 @@ async function onEnter(s) {
     case S.C_SPEAK_2: {
       // 손님 재발화: 동일 speaker locator가 같은 x 위치(51%)에 다시 나타남
       if (focusVignette) focusVignette.classList.add('active');
-      if (speechMainText) {
-        speechMainText.style.opacity = '1';
-        speechMainText.textContent = SPEECH_2;
+      if (speechRawText) {
+        speechRawText.style.opacity = '1';
+        speechRawText.textContent = SPEECH_2;
+      }
+      if (speechSummaryText) {
+        speechSummaryText.classList.remove('visible');
+        speechSummaryText.textContent = '';
       }
       if (speakerLocatorUnit) speakerLocatorUnit.classList.add('visible');
       if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
@@ -1341,16 +1366,13 @@ async function onEnter(s) {
     }
 
     case S.SEMANTIC_2: {
-      // 발화 종료(18.0s) → 450ms 후 제자리 축약: "고등어 · 2마리"
+      // 발화 종료(18.0s) → 원문 유지되고 400ms 후 그 밑에 폰트가 더 큰 '고등어 · 2마리' 축약 표시!
       later(() => {
-        if (speechMainText) {
-          speechMainText.style.opacity = '0';
-          later(() => {
-            speechMainText.innerHTML = '<strong>고등어 · 2마리</strong>';
-            speechMainText.style.opacity = '1';
-          }, 180);
+        if (speechSummaryText) {
+          speechSummaryText.textContent = '고등어 · 2마리';
+          speechSummaryText.classList.add('visible');
         }
-      }, 450);
+      }, 400);
 
       // 약 1.6초 후 locator와 UI 모두 fade out
       later(() => {
