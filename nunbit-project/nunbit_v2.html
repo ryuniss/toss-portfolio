@@ -334,19 +334,20 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      padding: 10px 24px;
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(18px) saturate(120%);
-      -webkit-backdrop-filter: blur(18px) saturate(120%);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+      gap: 6px;
+      padding: 12px 28px;
+      background: rgba(20, 24, 33, 0.75);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
       opacity: 0;
       pointer-events: none;
       transition: opacity 300ms ease, transform 300ms ease;
-      z-index: 26;
+      z-index: 30;
       white-space: nowrap;
+      min-width: 320px;
     }
     #merchantGuideCard.visible {
       opacity: 1;
@@ -356,47 +357,83 @@
     .guide-status-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 450;
-      color: rgba(255, 255, 255, 0.72);
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
       letter-spacing: -0.01em;
     }
     .guide-status-dot {
-      font-size: 8px;
-      color: rgba(255, 255, 255, 0.85);
+      font-size: 9px;
+      color: #3182F6;
+      animation: pulseDot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.4); opacity: 1; }
     }
     .guide-quote-text {
       font-size: clamp(15px, 1.4vw, 17px);
-      font-weight: 550;
+      font-weight: 600;
       color: #FFFFFF;
       letter-spacing: -0.015em;
-      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
     }
-    .guide-action-row {
-      font-size: 12px;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 0.48);
-      letter-spacing: 0.01em;
+    .guide-live-stt {
+      font-size: 13px;
+      font-weight: 500;
+      color: #79B8FF;
+      background: rgba(49, 130, 246, 0.12);
+      border: 1px solid rgba(49, 130, 246, 0.28);
+      padding: 4px 14px;
+      border-radius: 99px;
       display: flex;
       align-items: center;
-      gap: 5px;
-      margin-top: 1px;
+      gap: 6px;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 200ms ease;
+    }
+    .guide-live-stt.matched {
+      color: #56D364;
+      background: rgba(46, 160, 67, 0.2);
+      border-color: rgba(46, 160, 67, 0.4);
+      font-weight: 600;
+    }
+    .guide-action-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
     }
     .guide-quick-btn {
-      padding: 2px 8px;
-      background: rgba(255, 255, 255, 0.10);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       border-radius: 99px;
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 11px;
-      font-weight: 450;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 550;
       cursor: pointer;
-      transition: all 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 180ms ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     .guide-quick-btn:hover {
-      background: rgba(255, 255, 255, 0.22);
-      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .guide-quick-btn kbd {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 10px;
+      font-family: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     /* ─── 5. FINALE ENDING LAYER (시네마틱 아웃트로) ─── */
@@ -552,12 +589,18 @@
         <div id="merchantGuideCard">
           <div class="guide-status-row">
             <span class="guide-status-dot">●</span>
-            <span>답변을 기다리는 중</span>
+            <span id="guideStatusLabel">상인 대답 대기 중 (노트북 마이크로 말씀하세요)</span>
           </div>
-          <div class="guide-quote-text">“두 마리에 만이천 원이에요.” 라고 말해보세요</div>
+          <div class="guide-quote-text" id="guideQuoteText">“두 마리에 만이천 원이에요.”</div>
+          <div class="guide-live-stt" id="guideLiveStt">
+            <span>🎙️</span>
+            <span id="guideLiveSttText">마이크를 켜고 말씀하세요...</span>
+          </div>
           <div class="guide-action-row">
-            <span>마이크로 말하기 ·</span>
-            <button class="guide-quick-btn" id="btnQuickAnswer" title="클릭하거나 Space를 누르면 진행됩니다">Space로 진행</button>
+            <button class="guide-quick-btn" id="btnQuickAnswer" title="클릭하거나 Space를 누르면 바로 다음으로 진행됩니다">
+              <span>Space 또는 클릭하여 진행</span>
+              <kbd>Space</kbd>
+            </button>
           </div>
         </div>
       </div>
@@ -674,6 +717,10 @@ const speakerLocatorUnit     = document.getElementById('speakerLocatorUnit');
 const speechMainText         = document.getElementById('speechMainText');
 const merchantGuideCard      = document.getElementById('merchantGuideCard');
 const btnQuickAnswer         = document.getElementById('btnQuickAnswer');
+const guideStatusLabel       = document.getElementById('guideStatusLabel');
+const guideQuoteText         = document.getElementById('guideQuoteText');
+const guideLiveStt           = document.getElementById('guideLiveStt');
+const guideLiveSttText       = document.getElementById('guideLiveSttText');
 const endingLayer            = document.getElementById('endingLayer');
 const restartBtn             = document.getElementById('restartBtn');
 const tOverlay               = document.getElementById('transitionOverlay');
@@ -811,7 +858,7 @@ function filterOff() {
 }
 
 /* ════════════════════════════════════════════
-   2. 상인 마이크 음성 자동 인식 (고감도 RMS VAD + STT + 원터치 버튼)
+   2. 상인 마이크 음성 자동 인식 (고감도 RMS VAD + 한국어 STT 실시간 피드백 + Space 원터치)
    ════════════════════════════════════════════ */
 let micStream       = null;
 let micCtx          = null;
@@ -835,10 +882,12 @@ async function initMic() {
     micAnalyser.smoothingTimeConstant = 0.5;
     src.connect(micAnalyser);
     db('Mic', 'ready');
+    console.log('[initMic] Microphone stream initialized successfully');
     return true;
   } catch(e) {
     micAvailable = false;
     db('Mic', 'denied/unavail: ' + e.message);
+    console.warn('[initMic] Microphone permission denied or unavailable:', e);
     return false;
   }
 }
@@ -849,7 +898,12 @@ function startMerchantSTT() {
   vadCounter = 0;
   micActive = true;
 
-  // 1. Web Speech API (지원 시 한국어 STT)
+  if (guideLiveStt) guideLiveStt.classList.remove('matched');
+  if (guideLiveSttText) {
+    guideLiveSttText.textContent = '마이크로 말씀하시거나 Space를 누르세요';
+  }
+
+  // 1. Web Speech API (Chrome / Edge / Safari ko-KR 한국어 음성인식)
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SR) {
     try {
@@ -858,12 +912,17 @@ function startMerchantSTT() {
       }
       recognition = new SR();
       recognition.lang = 'ko-KR';
-      recognition.continuous = true;
+      // continuous = false가 Chrome Mac 환경에서 발화 즉시 반응하고 멈춤 없이 가장 안정적입니다
+      recognition.continuous = false;
       recognition.interimResults = true;
+      recognition.maxAlternatives = 3;
 
       recognition.onstart = () => {
         db('Mic', 'STT listening');
         console.log('[STT] Recognition started');
+        if (guideLiveSttText && !hasHeardSpeech) {
+          guideLiveSttText.textContent = '🎙️ 듣고 있어요... “만이천원이에요” 말씀하세요';
+        }
       };
 
       recognition.onresult = (e) => {
@@ -879,11 +938,22 @@ function startMerchantSTT() {
           console.log('[STT Result]', heard);
           db('Stt', heard);
 
-          // 유연한 가격/수량 키워드 감지 즉시 반응 (VAD 타이머 지연 없이 즉각 트리거)
+          // 실시간 사용자 발화 화면에 즉각 렌더링
+          if (guideLiveSttText) {
+            guideLiveSttText.textContent = `🎙️ “${heard}”`;
+          }
+
+          // 유연한 가격/수량 키워드 감지 즉시 반응
           if (isKeyResponse(heard)) {
             hasHeardSpeech = true;
             console.log('[STT Matched]', heard);
-            triggerMerchantDone(heard);
+            if (guideLiveStt) guideLiveStt.classList.add('matched');
+            if (guideLiveSttText) {
+              guideLiveSttText.textContent = `✓ “${heard}” 확인! 다음으로 진행합니다`;
+            }
+            setTimeout(() => {
+              advanceToNextScene('STT: ' + heard);
+            }, 250);
             return;
           }
         }
@@ -892,9 +962,13 @@ function startMerchantSTT() {
       recognition.onerror = (err) => {
         console.warn('[STT Error]', err.error);
         db('Mic', 'err:' + err.error);
+        if (err.error === 'not-allowed') {
+          if (guideLiveSttText) guideLiveSttText.textContent = '마이크 권한을 허용하거나 Space로 진행하세요';
+        }
       };
 
       recognition.onend = () => {
+        // 아직 대기 상태이고 미완료 상태면 계속해서 재시작
         if (micActive && !merchantDone && (state === S.WAIT_MERCH || state === S.C_SPEAK_1)) {
           try { recognition.start(); } catch(ex) {}
         }
@@ -905,9 +979,13 @@ function startMerchantSTT() {
       console.warn('[STT Start Error]', e);
       db('Mic', 'start err: ' + e.message);
     }
+  } else {
+    if (guideLiveSttText) {
+      guideLiveSttText.textContent = '🎙️ 음성을 내시거나 Space를 누르세요';
+    }
   }
 
-  // 2. RMS VAD 및 미니 파형 애니메이션
+  // 2. RMS VAD (음량 레벨 감지): STT 서버가 지연되더라도 소리를 내면 자동 진행 보장
   animateMic();
 }
 
@@ -920,32 +998,34 @@ function stopMerchantSTT() {
     recognition = null;
   }
   cancelAnimationFrame(window._miRaf);
-  lwBars.forEach(b => { if (b) b.style.height = '5px'; });
 }
 
 function isKeyResponse(text) {
   if (!text || text.trim().length < 1) return false;
 
-  const t = text
-    .replace(/\s+/g, '')
-    .replace(/,/g, '');
+  const t = text.replace(/\s+/g, '').replace(/,/g, '');
 
-  // 단순 인사/추임새 단독 발화 제외 (노이즈 방지)
-  if (/^(네|예|응|어|아|네네|안녕하세요|여보세요)$/.test(t)) return false;
+  // 단순 무의미한 한 글자 추임새 제외
+  if (/^(네|예|응|어|아|음|글쎄|저기)$/.test(t)) return false;
 
-  // 1. 숫자 가격 (예: 10000, 12000, 15000, 20000, 30000, 5000 등 3~6자리 숫자)
-  const hasNumericPrice = /\d{3,6}원?/.test(t);
+  // 1. 숫자 가격 (예: 1000, 12000, 15000, 20000, 30000, 5000 등 3~6자리 숫자 또는 숫자+원/만/천)
+  if (/\d{3,6}/.test(t) || /\d+(원|만|천)/.test(t)) return true;
 
-  // 2. 한국어 가격 표현 (예: 만원, 이만원, 삼만원, 만이천원, 만오천원, 만팔천원, 칠천원, 오천원 등)
-  const hasKoreanPrice =
-    /(일|이|삼|사|오|육|칠|팔|구)?만([일이삼사오육칠팔구\d]천)?원?/.test(t)
-    || /[일이삼사오육칠팔구\d]?[천만]원/.test(t);
+  // 2. 한국어 가격 표현 (예: 만원, 이만원, 삼만원, 만이천원, 만오천원, 칠천원, 오천원 등)
+  if (/(일|이|삼|사|오|육|칠|팔|구|십)?만([일이삼사오육칠팔구\d]+천)?원?/.test(t)) {
+    if (t.includes('만') || t.includes('천') || t.includes('원')) return true;
+  }
+  if (/[일이삼사오육칠팔구\d]?[천만]원/.test(t)) return true;
 
-  // 3. 수량 + 가격 맥락 (예: 한 마리, 두 마리, 세 마리, 두 개 등 + 원 / 천 / 만 단위)
-  const hasQuantity = /(한|두|세|네|다섯|\d+)(마리|개)/.test(t);
-  const hasPriceUnit = /(원|천|만)/.test(t);
+  // 3. 시장 거래 대화 표현 (마리, 드릴게요, 개, 팝니다, 사세요, 싸게, 얼마 등)
+  if (/(마리|드릴|주세요|골라|사가|가져가|싸게|얼마|가격)/.test(t)) return true;
 
-  return hasNumericPrice || hasKoreanPrice || (hasQuantity && hasPriceUnit);
+  // 4. 가격 단위 포함 2글자 이상 발화
+  if (t.length >= 2 && (t.includes('원') || t.includes('만') || t.includes('천') || t.includes('마리') || t.includes('이천'))) {
+    return true;
+  }
+
+  return false;
 }
 
 function animateMic() {
@@ -955,7 +1035,7 @@ function animateMic() {
   const freqBuf = new Uint8Array(micAnalyser.frequencyBinCount);
 
   function tick() {
-    if (!micActive) return;
+    if (!micActive || merchantDone) return;
 
     micAnalyser.getByteTimeDomainData(timeBuf);
     let sumSquares = 0;
@@ -967,11 +1047,31 @@ function animateMic() {
 
     micAnalyser.getByteFrequencyData(freqBuf);
     const highFreqSum = freqBuf.slice(4, 30).reduce((a, b) => a + b, 0) / 26;
-    const isVoiceDetected = rms > 0.035 || highFreqSum > 35;
+
+    // 말소리 감지 (RMS > 0.028)
+    if (rms > 0.028 || highFreqSum > 30) {
+      vadCounter++;
+      if (vadCounter === 1 && guideLiveSttText && !hasHeardSpeech) {
+        guideLiveSttText.textContent = '🎙️ 음성 감지 중...';
+      }
+      // 약 200~300ms 이상 음성이 지속되고 아직 STT 텍스트가 안 잡혔더라도 자동 백업 통과
+      if (vadCounter > 12 && !merchantDone) {
+        hasHeardSpeech = true;
+        console.log('[VAD Trigger] Voice volume detected -> advancing');
+        if (guideLiveStt) guideLiveStt.classList.add('matched');
+        if (guideLiveSttText) guideLiveSttText.textContent = '✓ 음성 감지 확인! 다음으로 진행합니다';
+        setTimeout(() => {
+          advanceToNextScene('VAD 음량 감지');
+        }, 200);
+        return;
+      }
+    } else {
+      if (vadCounter > 0) vadCounter--;
+    }
 
     if (hasHeardSpeech || isKeyResponse(lastSpokenText)) {
       if (!merchantDone) {
-        triggerMerchantDone(lastSpokenText);
+        advanceToNextScene(lastSpokenText || 'STT');
         return;
       }
     }
@@ -981,10 +1081,13 @@ function animateMic() {
   tick();
 }
 
-function triggerMerchantDone(recognizedText) {
-  if (merchantDone) return;
+/**
+ * 다음 씬(13.8초 이후 손님 재발화)으로 무조건 안정적으로 전진하는 일원화 함수
+ */
+function advanceToNextScene(reason = '') {
+  if (merchantDone && state === S.MERCH_DET && !vid.paused) return;
   merchantDone = true;
-  console.log('[triggerMerchantDone]', recognizedText, '| state:', state);
+  console.log('[advanceToNextScene] Triggered by:', reason, '| current state:', state);
 
   stopMerchantSTT();
 
@@ -993,32 +1096,30 @@ function triggerMerchantDone(recognizedText) {
   if (focusVignette) focusVignette.classList.remove('active');
   filterOff();
 
-  // state 업데이트 후 영상 이동
   state = S.MERCH_DET;
   db('State', S.MERCH_DET);
 
+  vid.pause();
   vid.currentTime = 13.8;
-  vid.play().then(() => {
-    console.log('[vid.play] resumed at 13.8s');
-  }).catch(err => {
-    console.warn('[vid.play failed] - needs user gesture?', err);
-  });
+  const p = vid.play();
+  if (p !== undefined) {
+    p.then(() => {
+      console.log('[advanceToNextScene] Customer video playing at 13.8s ✓');
+    }).catch(err => {
+      console.warn('[advanceToNextScene] Play interrupted, retrying with mute fallback:', err);
+      vid.muted = true;
+      vid.play().then(() => {
+        setTimeout(() => { vid.muted = false; }, 150);
+      }).catch(e => console.error('[advanceToNextScene] Failed to play video:', e));
+    });
+  }
 }
 
-// 직접 대답하기 버튼 클릭 핸들러 (원터치 Space 폴백 지원)
+// 하단 진행 버튼 클릭 리스너
 btnQuickAnswer.addEventListener('click', (e) => {
   e.stopPropagation();
-  if (merchantDone) return;
-  merchantDone = true;
-  stopMerchantSTT();
-  if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
-  if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
-  if (focusVignette) focusVignette.classList.remove('active');
-  filterOff();
-  state = S.MERCH_DET;
-  db('State', S.MERCH_DET);
-  vid.currentTime = 13.8;
-  vid.play().catch(err => console.warn('[btnQuickAnswer play err]', err));
+  e.preventDefault();
+  advanceToNextScene('Space/진행 버튼 클릭');
 });
 
 /* ════════════════════════════════════════════
@@ -1263,9 +1364,15 @@ async function onEnter(s) {
     }
 
     case S.WAIT_MERCH: {
-      // 1. 상태 진입 즉시 마이크 STT 리스닝 활성화 (0초 지연으로 즉각 음성 캡처)
+      // 1. 상태 진입 즉시 마이크 STT 리스닝 활성화 (마이크 미준비 시 즉각 재연결)
       merchantDone = false;
-      startMerchantSTT();
+      if (!micStream || !micAnalyser) {
+        initMic().then(() => {
+          if (state === S.WAIT_MERCH) startMerchantSTT();
+        });
+      } else {
+        startMerchantSTT();
+      }
 
       // 2. 손님 첫 대사 종료(5.1s) → 450ms 후 같은 위치에서 자연스럽게 제자리 축약
       later(() => {
@@ -1362,12 +1469,18 @@ restartBtn.addEventListener('click', async () => {
   setState(S.INTRO);
 });
 
-// 키보드 Space / Enter 핸들러
-document.addEventListener('keydown', (e) => {
-  if (e.code !== 'Space' && e.code !== 'Enter') return;
-  e.preventDefault();
+// 키보드 Space / Enter 핸들러 (어떤 포커스/상태에서도 100% 가로채는 최우선 캡처 리스너)
+function handleGlobalKeydown(e) {
+  const isSpace = e.code === 'Space' || e.key === ' ' || e.keyCode === 32;
+  const isEnter = e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13;
+  if (!isSpace && !isEnter) return;
 
-  // 1. 인트로 화면인 경우
+  e.preventDefault();
+  e.stopPropagation();
+
+  console.log('[Global Keydown]', e.code, e.key, '| current state:', state);
+
+  // 1. 인트로 화면
   if (state === S.INTRO) {
     if (introBrandCard.classList.contains('visible')) {
       startDirectExperience();
@@ -1379,27 +1492,19 @@ document.addEventListener('keydown', (e) => {
     return;
   }
 
-  // 2. 손님 발화 중 or 상인 대기 중 → Space는 항상 user gesture 컨텍스트에서 즉시 vid.play()
-  if (state === S.C_IDLE || state === S.C_SPEAK_1 || state === S.WAIT_MERCH) {
-    console.log('[Space] state =', state, '→ direct play to 13.8s');
-    vid.pause();
-    merchantDone = true;              // 이중 실행 방지
-    stopMerchantSTT();
-    if (merchantGuideCard) merchantGuideCard.classList.remove('visible');
-    if (speakerLocatorUnit) speakerLocatorUnit.classList.remove('visible');
-    if (focusVignette) focusVignette.classList.remove('active');
-    filterOff();
-    state = S.MERCH_DET;
-    db('State', S.MERCH_DET);
-    vid.currentTime = 13.8;           // user gesture context 안에서 직접 실행 → autoplay 허용
-    vid.play().then(() => {
-      console.log('[Space] play resumed 13.8s ✓');
-    }).catch(err => {
-      console.warn('[Space] play failed:', err);
-    });
+  // 2. 엔딩 화면 리플레이
+  if (state === S.ENDING) {
+    if (restartBtn) restartBtn.click();
     return;
   }
-});
+
+  // 3. 체험 화면 중 (C_IDLE, C_SPEAK_1, WAIT_MERCH, MERCH_DET 등 어떤 상태이든!)
+  // Space/Enter를 누르면 무조건 13.8초 손님 응답 씬으로 직행
+  advanceToNextScene('Keyboard ' + (isSpace ? 'Space' : 'Enter'));
+}
+
+window.addEventListener('keydown', handleGlobalKeydown, { capture: true });
+document.addEventListener('keydown', handleGlobalKeydown, { capture: true });
 
 /* ── BOOT ── */
 window.addEventListener('load', () => setState(S.INTRO));
