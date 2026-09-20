@@ -589,12 +589,12 @@
         <div id="merchantGuideCard">
           <div class="guide-status-row">
             <span class="guide-status-dot">●</span>
-            <span id="guideStatusLabel">상인 대답 대기 중 (노트북 마이크로 말씀하세요)</span>
+            <span id="guideStatusLabel">상인 대답 대기 중 (노트북 마이크로 문장을 말씀하세요)</span>
           </div>
-          <div class="guide-quote-text" id="guideQuoteText">“두 마리에 만이천 원이에요.”</div>
+          <div class="guide-quote-text" id="guideQuoteText">“두 마리에 만이천 원입니다.”</div>
           <div class="guide-live-stt" id="guideLiveStt">
             <span>🎙️</span>
-            <span id="guideLiveSttText">마이크를 켜고 말씀하세요...</span>
+            <span id="guideLiveSttText">듣고 있어요... 위 문장을 말씀해 보세요</span>
           </div>
           <div class="guide-action-row">
             <button class="guide-quick-btn" id="btnQuickAnswer" title="클릭하거나 Space를 누르면 바로 다음으로 진행됩니다">
@@ -895,12 +895,11 @@ async function initMic() {
 function startMerchantSTT() {
   hasHeardSpeech = false;
   lastSpokenText = '';
-  vadCounter = 0;
   micActive = true;
 
   if (guideLiveStt) guideLiveStt.classList.remove('matched');
   if (guideLiveSttText) {
-    guideLiveSttText.textContent = '마이크로 말씀하시거나 Space를 누르세요';
+    guideLiveSttText.textContent = '듣고 있어요... “두 마리에 만이천 원입니다” 말씀하세요';
   }
 
   // 1. Web Speech API (Chrome / Edge / Safari ko-KR 한국어 음성인식)
@@ -912,17 +911,13 @@ function startMerchantSTT() {
       }
       recognition = new SR();
       recognition.lang = 'ko-KR';
-      // continuous = false가 Chrome Mac 환경에서 발화 즉시 반응하고 멈춤 없이 가장 안정적입니다
-      recognition.continuous = false;
+      recognition.continuous = false; // 문장 단위 빠른 매칭을 위한 단발 모드
       recognition.interimResults = true;
       recognition.maxAlternatives = 3;
 
       recognition.onstart = () => {
         db('Mic', 'STT listening');
-        console.log('[STT] Recognition started');
-        if (guideLiveSttText && !hasHeardSpeech) {
-          guideLiveSttText.textContent = '🎙️ 듣고 있어요... “만이천원이에요” 말씀하세요';
-        }
+        console.log('[STT] Listening for merchant sentence');
       };
 
       recognition.onresult = (e) => {
@@ -938,22 +933,22 @@ function startMerchantSTT() {
           console.log('[STT Result]', heard);
           db('Stt', heard);
 
-          // 실시간 사용자 발화 화면에 즉각 렌더링
-          if (guideLiveSttText) {
+          // 화면에 사용자가 말한 문장 실시간 렌더링
+          if (guideLiveSttText && !hasHeardSpeech) {
             guideLiveSttText.textContent = `🎙️ “${heard}”`;
           }
 
-          // 유연한 가격/수량 키워드 감지 즉시 반응
+          // ★ 잡음/숨소리는 철저히 무시하고, 실제 가격/문장('두 마리에 만이천원', '만이천원' 등)이 인식되었을 때만 트리거!
           if (isKeyResponse(heard)) {
             hasHeardSpeech = true;
-            console.log('[STT Matched]', heard);
+            console.log('[STT Matched Target Phrase!]', heard);
             if (guideLiveStt) guideLiveStt.classList.add('matched');
             if (guideLiveSttText) {
-              guideLiveSttText.textContent = `✓ “${heard}” 확인! 다음으로 진행합니다`;
+              guideLiveSttText.textContent = `✓ “${heard}” 인식 완료!`;
             }
             setTimeout(() => {
-              advanceToNextScene('STT: ' + heard);
-            }, 250);
+              advanceToNextScene('STT 정확 매칭: ' + heard);
+            }, 450);
             return;
           }
         }
@@ -968,7 +963,7 @@ function startMerchantSTT() {
       };
 
       recognition.onend = () => {
-        // 아직 대기 상태이고 미완료 상태면 계속해서 재시작
+        // 목표 문장이 아직 인식되지 않았고 대기 상태면 계속해서 마이크 리스닝 유지
         if (micActive && !merchantDone && (state === S.WAIT_MERCH || state === S.C_SPEAK_1)) {
           try { recognition.start(); } catch(ex) {}
         }
@@ -981,11 +976,11 @@ function startMerchantSTT() {
     }
   } else {
     if (guideLiveSttText) {
-      guideLiveSttText.textContent = '🎙️ 음성을 내시거나 Space를 누르세요';
+      guideLiveSttText.textContent = '🎙️ 음성을 말씀하시거나 Space를 누르세요';
     }
   }
 
-  // 2. RMS VAD (음량 레벨 감지): STT 서버가 지연되더라도 소리를 내면 자동 진행 보장
+  // 2. 오디오 파형 시각화만 구동 (절대 단순 볼륨으로 화면을 넘기지 않음!)
   animateMic();
 }
 
@@ -1000,39 +995,51 @@ function stopMerchantSTT() {
   cancelAnimationFrame(window._miRaf);
 }
 
+/**
+ * 상인의 핵심 대답 문장 정밀 검증 함수
+ * 단순 숨소리, 기침, 어/음 등은 철저히 무시하고, '두 마리에 만이천원' 또는 핵심 가격 문장만 통과
+ */
 function isKeyResponse(text) {
   if (!text || text.trim().length < 1) return false;
 
   const t = text.replace(/\s+/g, '').replace(/,/g, '');
 
-  // 단순 무의미한 한 글자 추임새 제외
-  if (/^(네|예|응|어|아|음|글쎄|저기)$/.test(t)) return false;
+  // 1. 단순 소음, 기침, 무의미한 짧은 추임새는 절대 통과 금지
+  if (/^(네|예|응|어|아|음|글쎄|저기|그|에|하|허|얍|오)$/.test(t)) return false;
 
-  // 1. 숫자 가격 (예: 1000, 12000, 15000, 20000, 30000, 5000 등 3~6자리 숫자 또는 숫자+원/만/천)
-  if (/\d{3,6}/.test(t) || /\d+(원|만|천)/.test(t)) return true;
-
-  // 2. 한국어 가격 표현 (예: 만원, 이만원, 삼만원, 만이천원, 만오천원, 칠천원, 오천원 등)
-  if (/(일|이|삼|사|오|육|칠|팔|구|십)?만([일이삼사오육칠팔구\d]+천)?원?/.test(t)) {
-    if (t.includes('만') || t.includes('천') || t.includes('원')) return true;
+  // 2. 목표 문장 완벽 매칭군: '두마리' + '만이천'/'12000'
+  if ((t.includes('두마리') || t.includes('2마리')) && (t.includes('만이천') || t.includes('12000') || t.includes('만2천') || t.includes('1.2만'))) {
+    return true;
   }
-  if (/[일이삼사오육칠팔구\d]?[천만]원/.test(t)) return true;
 
-  // 3. 시장 거래 대화 표현 (마리, 드릴게요, 개, 팝니다, 사세요, 싸게, 얼마 등)
-  if (/(마리|드릴|주세요|골라|사가|가져가|싸게|얼마|가격)/.test(t)) return true;
+  // 3. 핵심 가격 표현: '만이천원', '만2천원', '12000원', '12000'
+  if (/(만이천|만2천|12000)원?/.test(t)) {
+    return true;
+  }
 
-  // 4. 가격 단위 포함 2글자 이상 발화
-  if (t.length >= 2 && (t.includes('원') || t.includes('만') || t.includes('천') || t.includes('마리') || t.includes('이천'))) {
+  // 4. 자연스러운 가격 발화 (예: '만원입니다', '이만원이에요', '만오천원입니다' 등 명확한 가격 종결형)
+  if (/(일|이|삼|사|오|육|칠|팔|구)?만([일이삼사오육칠팔구\d]+천)?원(입니다|이에요|이요|요)?/.test(t)) {
+    return true;
+  }
+  if (/\d{3,6}원(입니다|이에요|이요|요)?/.test(t)) {
+    return true;
+  }
+
+  // 5. '두마리에 만원' 등 수량 + 단위
+  if ((t.includes('두마리') || t.includes('2마리')) && (t.includes('원') || t.includes('만원') || t.includes('천원'))) {
     return true;
   }
 
   return false;
 }
 
+/**
+ * 마이크 파형/레벨 시각 반응 전용 (VAD 자동 넘김 기능 100% 제거됨)
+ */
 function animateMic() {
   if (!micAnalyser) return;
 
   const timeBuf = new Uint8Array(micAnalyser.fftSize);
-  const freqBuf = new Uint8Array(micAnalyser.frequencyBinCount);
 
   function tick() {
     if (!micActive || merchantDone) return;
@@ -1045,35 +1052,10 @@ function animateMic() {
     }
     const rms = Math.sqrt(sumSquares / timeBuf.length);
 
-    micAnalyser.getByteFrequencyData(freqBuf);
-    const highFreqSum = freqBuf.slice(4, 30).reduce((a, b) => a + b, 0) / 26;
-
-    // 말소리 감지 (RMS > 0.028)
-    if (rms > 0.028 || highFreqSum > 30) {
-      vadCounter++;
-      if (vadCounter === 1 && guideLiveSttText && !hasHeardSpeech) {
-        guideLiveSttText.textContent = '🎙️ 음성 감지 중...';
-      }
-      // 약 200~300ms 이상 음성이 지속되고 아직 STT 텍스트가 안 잡혔더라도 자동 백업 통과
-      if (vadCounter > 12 && !merchantDone) {
-        hasHeardSpeech = true;
-        console.log('[VAD Trigger] Voice volume detected -> advancing');
-        if (guideLiveStt) guideLiveStt.classList.add('matched');
-        if (guideLiveSttText) guideLiveSttText.textContent = '✓ 음성 감지 확인! 다음으로 진행합니다';
-        setTimeout(() => {
-          advanceToNextScene('VAD 음량 감지');
-        }, 200);
-        return;
-      }
-    } else {
-      if (vadCounter > 0) vadCounter--;
-    }
-
-    if (hasHeardSpeech || isKeyResponse(lastSpokenText)) {
-      if (!merchantDone) {
-        advanceToNextScene(lastSpokenText || 'STT');
-        return;
-      }
+    // 사용자가 소리를 낼 때 점(dot)을 생동감 있게 펄스
+    if (rms > 0.035) {
+      const dot = document.querySelector('.guide-status-dot');
+      if (dot) dot.style.transform = `scale(${Math.min(1.8, 1 + rms * 6)})`;
     }
 
     window._miRaf = requestAnimationFrame(tick);
