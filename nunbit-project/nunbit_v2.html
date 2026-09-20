@@ -377,18 +377,35 @@
     .hud-guide-sub {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       font-size: 11.5px;
-      font-weight: 450;
-      color: rgba(255, 255, 255, 0.58);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.65);
       letter-spacing: -0.01em;
+      transition: color 180ms ease;
     }
+    .hud-mic-icon {
+      width: 12px;
+      height: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      flex-shrink: 0;
+      transition: color 180ms ease, transform 180ms ease;
+    }
+    /* 파란색 완전 제거 -> 맑고 깨끗한 소프트 화이트 펄스 */
     .hud-guide-sub.hearing {
-      color: #79B8FF;
+      color: #FFFFFF;
     }
+    .hud-guide-sub.hearing .hud-mic-icon {
+      color: #FFFFFF;
+      transform: scale(1.1);
+    }
+    /* 완료 시 세련된 미스티 에메랄드 */
     .hud-guide-sub.success {
-      color: #56D364;
-      font-weight: 600;
+      color: #A3E7B4;
+      font-weight: 500;
+    }
+    .hud-guide-sub.success .hud-mic-icon {
+      color: #A3E7B4;
     }
 
     /* ─── 5. FINALE ENDING LAYER (시네마틱 아웃트로) ─── */
@@ -544,7 +561,13 @@
         <div id="merchantGuideCard" title="마이크로 말씀하시거나, 클릭 또는 Space로 대답할 수 있습니다">
           <div class="hud-guide-main" id="guideQuoteText">“두 마리에 만이천 원입니다.”</div>
           <div class="hud-guide-sub" id="guideLiveStt">
-            <span id="guideLiveSttText">🎙️ 마이크로 말씀하시거나 탭/Space로 대답</span>
+            <svg class="hud-mic-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+            <span id="guideLiveSttText">마이크로 말씀하시거나 카드를 탭하세요 (Space)</span>
           </div>
         </div>
       </div>
@@ -844,14 +867,14 @@ function startMerchantSTT() {
     guideLiveStt.classList.remove('hearing', 'success');
   }
   if (guideLiveSttText) {
-    guideLiveSttText.textContent = '🎙️ 듣고 있어요... “두 마리에 만이천 원입니다” 말씀해 보세요';
+    guideLiveSttText.textContent = '듣고 있어요... “두 마리에 만이천 원입니다” 말씀하세요';
   }
 
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
     console.warn('[STT] SpeechRecognition not supported in this browser.');
     if (guideLiveSttText) {
-      guideLiveSttText.textContent = '💡 카드를 탭하거나 Space를 눌러 대답을 전하세요';
+      guideLiveSttText.textContent = '카드를 탭하거나 Space를 눌러 대답하세요';
     }
     return;
   }
@@ -871,7 +894,7 @@ function startMerchantSTT() {
       console.log('[STT] Mic listening started');
       if (guideLiveStt) guideLiveStt.classList.add('hearing');
       if (guideLiveSttText && !hasHeardSpeech) {
-        guideLiveSttText.textContent = '🎙️ 듣고 있어요... “두 마리에 만이천 원입니다”';
+        guideLiveSttText.textContent = '듣고 있어요... “두 마리에 만이천 원입니다”';
       }
     };
 
@@ -890,7 +913,7 @@ function startMerchantSTT() {
 
         // 사용자가 말하는 단어가 실시간으로 카드 하단에 부드럽게 렌더링
         if (guideLiveSttText && !hasHeardSpeech) {
-          guideLiveSttText.textContent = `🎙️ “${heard}”`;
+          guideLiveSttText.textContent = `“${heard}”`;
         }
 
         // 유연하면서도 명확한 가격/수량 키워드 검증
@@ -903,7 +926,7 @@ function startMerchantSTT() {
             guideLiveStt.classList.add('success');
           }
           if (guideLiveSttText) {
-            guideLiveSttText.textContent = `✓ “${heard}” 대답 전달 완료!`;
+            guideLiveSttText.textContent = `“${heard}” 전달 완료`;
           }
           setTimeout(() => {
             advanceToNextScene('음성 대답: ' + heard);
@@ -918,7 +941,7 @@ function startMerchantSTT() {
       db('Mic', 'err:' + err.error);
       if (err.error === 'not-allowed') {
         if (guideLiveSttText) {
-          guideLiveSttText.textContent = '⚠️ 마이크 허용 필요 · 카드를 탭하거나 Space로 대답';
+          guideLiveSttText.textContent = '마이크 권한을 허용하거나 카드를 탭하세요 (Space)';
         }
       }
     };
