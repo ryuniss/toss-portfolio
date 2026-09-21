@@ -1761,11 +1761,13 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 }
 </style><style id="toss-vertical-balance-system">
 /* ==========================================================================
-   TOSS PORTFOLIO: Unified Vertical Grid & Baseline Alignment (1600x900 Canvas)
-   - Height of .body is strictly standardized across p24, p25, p30 (555px).
-   - Main content bottom edge terminates at the exact same baseline (~795px).
-   - 28px clean breathing room preserved above the 823px footer border.
-   - Diagram SVGs fill 75-80% of frames; card interiors naturally distributed.
+   TOSS PORTFOLIO: Senior Editorial Typography & Vertical Grid (1600x900 Canvas)
+   - "Card Diet": Removed unnecessary rounded card boxes; pure typography & rules.
+   - H1 Hierarchy: Big H1 (p24) vs Medium H1 (p25, p30) creates natural crescendo.
+   - Ratio: 24p Left 40% (440px) vs Right 60% Diagram Hero.
+   - Persona: Human-first gaze path (Face -> Name -> Quote -> Needs) with honest modeling note.
+   - p30: Tactical NUNBIT HUD fragment anchors final slide to real UI product.
+   - Unified baseline: All 3 slides terminate at exact 795px baseline (28px breathing room).
    ========================================================================== */
 
 #p24 header, #p25 header, #p30 header {
@@ -1776,11 +1778,23 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
   box-sizing: border-box !important;
 }
 
-#p24 header h1, #p25 header h1, #p30 header h1 {
-  font-size: clamp(28px, 2.5vw, 36px) !important;
-  line-height: 1.3 !important;
+/* H1 Typographic Crescendo */
+#p24 header h1 {
+  font-size: clamp(32px, 2.7vw, 38px) !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.025em !important;
+  margin: 0 !important;
+  color: #151b22 !important;
+}
+
+#p25 header h1, #p30 header h1 {
+  font-size: clamp(25px, 2.1vw, 29px) !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
   letter-spacing: -0.02em !important;
   margin: 0 !important;
+  color: #222b35 !important;
 }
 
 #p24 .body, #p25 .body, #p30 .body {
@@ -1797,13 +1811,13 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 }
 
 /* ==========================================================================
-   PAGE 24: Background & Evidence (2-Column Unified 555px Layout)
+   PAGE 24: Background & Evidence (Left 40% / Right 60% Diagram Hero)
    ========================================================================== */
 #p24 .p24-refined-layout,
 #p24 .p24-diagram-layout {
   display: grid !important;
-  grid-template-columns: 480px 1fr !important;
-  gap: 48px !important;
+  grid-template-columns: 440px 1fr !important;
+  gap: 52px !important;
   align-items: stretch !important;
   height: 100% !important;
   box-sizing: border-box !important;
@@ -1903,7 +1917,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
   background: #ffffff !important;
   border: 1px solid #dde3e0 !important;
   border-radius: 10px !important;
-  padding: 16px 20px !important;
+  padding: 18px 24px !important;
   box-sizing: border-box !important;
   height: 505px !important;
   display: flex !important;
@@ -1915,7 +1929,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 #p24 .p24-svg-frame svg {
   width: 100% !important;
   height: 100% !important;
-  max-height: 460px !important;
+  max-height: 465px !important;
   display: block !important;
 }
 
@@ -1928,12 +1942,12 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 }
 
 /* ==========================================================================
-   PAGE 25: Persona & Context (Unified 555px Vertical Grid)
+   PAGE 25: Persona & Context (Human-First Editorial, No Enclosed Card)
    ========================================================================== */
 #p25 .p25-refined-layout {
   display: grid !important;
-  grid-template-columns: 350px 1fr !important;
-  gap: 40px !important;
+  grid-template-columns: 340px 1fr !important;
+  gap: 48px !important;
   align-items: stretch !important;
   height: 100% !important;
   box-sizing: border-box !important;
@@ -1942,29 +1956,27 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 #p25 .p25-persona-col {
   height: 100% !important;
   box-sizing: border-box !important;
-}
-
-#p25 .p25-portrait-card {
-  height: 100% !important;
-  background: #ffffff !important;
-  border: 1px solid #dde3e0 !important;
-  border-radius: 10px !important;
-  padding: 24px 20px !important;
-  box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
-  text-align: center !important;
   justify-content: space-between !important;
+  border-right: 1px solid #e2e8e5 !important;
+  padding-right: 36px !important;
+}
+
+#p25 .p25-human-profile {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
 }
 
 #p25 .p25-portrait-wrap {
-  width: 132px !important;
-  height: 132px !important;
+  width: 136px !important;
+  height: 136px !important;
   border-radius: 50% !important;
   overflow: hidden !important;
   border: 2px solid #e1e7e4 !important;
-  margin: 0 auto 12px !important;
+  margin: 0 0 16px 0 !important;
   background: #f0f3f1 !important;
   flex-shrink: 0 !important;
 }
@@ -1977,7 +1989,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 }
 
 #p25 .p25-bio-name {
-  font-size: 21px !important;
+  font-size: 22px !important;
   font-weight: 700 !important;
   color: #1e2631 !important;
   margin: 0 0 4px !important;
@@ -1994,8 +2006,8 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 #p25 .p25-badge-wrap {
   display: flex !important;
   gap: 8px !important;
-  justify-content: center !important;
-  margin-bottom: 8px !important;
+  justify-content: flex-start !important;
+  margin-bottom: 18px !important;
 }
 
 #p25 .p25-badge {
@@ -2008,21 +2020,26 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
   letter-spacing: -0.2px !important;
 }
 
-#p25 .p25-quote-box {
-  background: #f8faf9 !important;
-  border-left: 3px solid #4c6b60 !important;
-  border-radius: 6px !important;
-  padding: 14px 16px !important;
-  text-align: left !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+#p25 .p25-quote-block {
+  border-left: 2px solid #4c6b60 !important;
+  padding-left: 14px !important;
   margin-top: auto !important;
 }
 
+#p25 .p25-quote-tag {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  color: #4c6b60 !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
 #p25 .p25-quote-text {
-  font-size: 13.5px !important;
+  font-size: 14px !important;
   line-height: 1.6 !important;
-  color: #3a4552 !important;
+  font-weight: 500 !important;
+  color: #273240 !important;
   margin: 0 !important;
   letter-spacing: -0.2px !important;
 }
@@ -2038,7 +2055,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 #p25 .p25-research-nodes {
   display: flex !important;
   flex-direction: column !important;
-  gap: 14px !important;
+  gap: 16px !important;
 }
 
 #p25 .p25-section {
@@ -2056,7 +2073,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 }
 
 #p25 .p25-sec-text {
-  font-size: 14.5px !important;
+  font-size: 15px !important;
   line-height: 1.45 !important;
   font-weight: 600 !important;
   color: #202730 !important;
@@ -2079,32 +2096,31 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
   letter-spacing: -0.2px !important;
 }
 
+/* 25p Design Opportunity: Pure Typography & Hairline (Card Removed) */
 #p25 .p25-opp-container {
-  background: #f8faf9 !important;
-  border: 1px solid #e1e7e3 !important;
-  border-radius: 8px !important;
-  padding: 14px 18px !important;
+  border-top: 2px solid #202c3a !important;
+  padding-top: 14px !important;
   display: grid !important;
   grid-template-columns: 1.2fr 1fr !important;
-  gap: 20px !important;
-  align-items: center !important;
+  gap: 28px !important;
+  align-items: flex-start !important;
   margin-top: auto !important;
   box-sizing: border-box !important;
 }
 
 #p25 .p25-opp-label,
 #p25 .p25-opp-sublabel {
-  font-size: 10.5px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: 0.09em !important;
   color: #4c6b60 !important;
   display: block !important;
-  margin-bottom: 3px !important;
+  margin-bottom: 4px !important;
 }
 
 #p25 .p25-opp-question {
-  font-size: 14.5px !important;
-  line-height: 1.4 !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
   font-weight: 700 !important;
   color: #171d24 !important;
   display: block !important;
@@ -2112,15 +2128,15 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 }
 
 #p25 .p25-opp-desc {
-  font-size: 12.5px !important;
-  line-height: 1.45 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
   color: #52606e !important;
   margin: 0 !important;
   letter-spacing: -0.2px !important;
 }
 
 /* ==========================================================================
-   PAGE 30: Scalability & Next Steps (Unified 555px Vertical Grid)
+   PAGE 30: Scalability & Next Steps + Tactile HUD Fragment
    ========================================================================== */
 #p30 .p30-canvas {
   display: flex !important;
@@ -2235,6 +2251,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
   margin: 0 !important;
   height: 100% !important;
   box-sizing: border-box !important;
+  position: relative !important;
 }
 
 #p30 .p30-svg-frame {
@@ -2247,47 +2264,89 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  position: relative !important;
 }
 
 #p30 .p30-svg-frame svg {
   width: 100% !important;
   height: 100% !important;
-  max-height: 320px !important;
+  max-height: 335px !important;
   display: block !important;
 }
 
-#p30 .p30-validation-strip {
+/* NUNBIT Tactile Glass HUD Memory Fragment (Right bottom of diagram) */
+#p30 .p30-hud-fragment {
+  position: absolute !important;
+  right: 20px !important;
+  bottom: 18px !important;
+  background: rgba(30, 42, 38, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
   display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-  box-sizing: border-box !important;
-  margin-top: auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  backdrop-filter: blur(8px) !important;
+  pointer-events: none !important;
 }
 
-#p30 .p30-val-card {
-  background: #f8faf9 !important;
-  border: 1px solid #e1e7e3 !important;
-  border-radius: 8px !important;
-  padding: 12px 18px !important;
+#p30 .p30-hud-anchor {
+  width: 0 !important;
+  height: 0 !important;
+  border-left: 4px solid transparent !important;
+  border-right: 4px solid transparent !important;
+  border-top: 6px solid #82bda8 !important;
+}
+
+#p30 .p30-hud-data {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#p30 .p30-hud-main {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.2px !important;
+  line-height: 1.2 !important;
+}
+
+#p30 .p30-hud-sub {
+  font-size: 10px !important;
+  color: #a4c9bc !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1.2 !important;
+  margin-top: 2px !important;
+}
+
+/* 30p Next Validation: Pure Typographic Strip (Card Removed) */
+#p30 .p30-validation-strip {
+  border-top: 1px solid #dce2e8 !important;
+  padding-top: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
   box-sizing: border-box !important;
+  margin-top: auto !important;
 }
 
 #p30 .p30-val-header {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 2px !important;
 }
 
 #p30 .p30-val-tag {
-  font-size: 10.5px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: 0.08em !important;
   color: #4c6b60 !important;
 }
 
 #p30 .p30-val-sub {
-  font-size: 12px !important;
+  font-size: 12.5px !important;
   color: #616e7c !important;
   letter-spacing: -0.2px !important;
 }
@@ -2295,16 +2354,16 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 #p30 .p30-val-grid {
   display: grid !important;
   grid-template-columns: 1fr 1fr 1fr !important;
-  gap: 20px !important;
+  gap: 28px !important;
 }
 
 #p30 .p30-val-col {
-  border-left: 2px solid #dce2e8 !important;
-  padding-left: 10px !important;
+  border-left: 2px solid #e2e8e5 !important;
+  padding-left: 12px !important;
 }
 
 #p30 .p30-val-term {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 0.06em !important;
   color: #202730 !important;
@@ -2323,7 +2382,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
 #p30 .p30-disclaimer {
   font-size: 11px !important;
   color: #838e9a !important;
-  margin: 0 !important;
+  margin: 4px 0 0 !important;
   line-height: 1.4 !important;
   letter-spacing: -0.2px !important;
 }
@@ -2514,28 +2573,27 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
     </div>
     <figcaption>얼굴을 중심으로 시각 단서와 거래 정보가 함께 읽히는 구조. 시선이 얼굴을 벗어나면 대화 보완 단서를 잃는다.</figcaption>
   </figure>
-</div></div><footer><span>Puschmann et al., 2019 · Cohen &amp; Gordon-Salant, 2017 · Peng et al., CHI 2018 — 선행연구 기반 설계 가설</span><span class="page-no">24 / 31</span></footer></section></div><div class="wrap"><section class="slide research-page" id="p25" data-project="03 NUNBIT" data-title="대화를 놓치고 싶지 않은, 전통시장 생선가게의 고령 상인" style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / USER &amp; CONTEXT</span></div><header><h1 style="font-size: clamp(28px, 2.6vw, 36px); line-height: 1.3; letter-spacing: -0.02em;">대화를 놓치고 싶지 않은,<br>전통시장 생선가게의 고령 상인.</h1></header><div class="body"><div class="p25-refined-layout">
-  <!-- 좌측: 인물 포트레이트 & 바이오 -->
+</div></div><footer><span>Puschmann et al., 2019 · Cohen &amp; Gordon-Salant, 2017 · Peng et al., CHI 2018 — 선행연구 기반 설계 가설</span><span class="page-no">24 / 31</span></footer></section></div><div class="wrap"><section class="slide research-page" id="p25" data-project="03 NUNBIT" data-title="대화를 놓치고 싶지 않은, 전통시장 생선가게의 고령 상인" style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / USER &amp; CONTEXT</span></div><header><h1>대화를 놓치고 싶지 않은,<br>전통시장 생선가게의 고령 상인.</h1></header><div class="body"><div class="p25-refined-layout">
+  <!-- 좌측: '사람' 중심 에디토리얼 프로필 (외곽 박스 제거, 얼굴 -> 김정숙 -> 인용구 순) -->
   <div class="p25-persona-col">
-    <div class="p25-portrait-card">
+    <div class="p25-human-profile">
       <div class="p25-portrait-wrap">
         <img src="assets/nunbit/persona/face_circle.png" alt="김정숙 상인" class="p25-portrait-img">
       </div>
-      <div class="p25-bio-info">
-        <h3 class="p25-bio-name">김정숙</h3>
-        <span class="p25-bio-role">74세 · 전통시장 수산물 상인 32년</span>
-        <div class="p25-badge-wrap">
-          <span class="p25-badge">초기 노인성 난청</span>
-          <span class="p25-badge">소음 취약 환경</span>
-        </div>
+      <h3 class="p25-bio-name">김정숙</h3>
+      <span class="p25-bio-role">74세 · 전통시장 수산물 상인 32년</span>
+      <div class="p25-badge-wrap">
+        <span class="p25-badge">초기 노인성 난청</span>
+        <span class="p25-badge">소음 취약 환경</span>
       </div>
-      <div class="p25-quote-box">
-        <p class="p25-quote-text">“사람이 셋만 모여도 누구 말인지 분간이 잘 안 서고, 바쁜데 끝말을 놓쳐서 되묻는 게 참 미안하고 눈치 보여요.”</p>
-      </div>
+    </div>
+    <div class="p25-quote-block">
+      <span class="p25-quote-tag">USER VOICE</span>
+      <p class="p25-quote-text">“사람이 셋만 모여도 누구 말인지 분간이 잘 안 서고, 바쁜데 끝말을 놓쳐서 되묻는 게 참 미안하고 눈치 보여요.”</p>
     </div>
   </div>
 
-  <!-- 우측: 3대 리서치 맥락 및 기회 영역 -->
+  <!-- 우측: 3대 리서치 맥락 및 기회 영역 (카드 박스 걷어낸 순수 에디토리얼) -->
   <div class="p25-content-col">
     <div class="p25-research-nodes">
       <div class="p25-section">
@@ -2564,7 +2622,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
       </div>
     </div>
 
-    <!-- 하단: DESIGN OPPORTUNITY & DESIGN RESPONSE -->
+    <!-- 하단: DESIGN OPPORTUNITY & DESIGN RESPONSE (헤어라인 구분 순수 타이포그래피) -->
     <div class="p25-opp-container">
       <div class="p25-opp-left">
         <span class="p25-opp-label">DESIGN OPPORTUNITY</span>
@@ -2576,7 +2634,7 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
       </div>
     </div>
   </div>
-</div></div><footer><span>사용자 정의 / 전통시장 대면 거래 상황에서 드러난 페르소나의 소통 맥락과 설계 기회</span><span class="page-no">25 / 31</span></footer></section></div><div class="wrap"><section class="slide research-page " id="p26" data-project="03 NUNBIT" data-title="한 번의 질문이, 여러 번의 확인으로 이어지는 순간." style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / PROBLEM FRAMING</span></div><header><h1>한 번의 질문이,<br>여러 번의 확인으로 이어지는 순간.</h1></header><div class="body">
+</div></div><footer><span>사용자 정의 / * 현장 관찰 시나리오 기반의 페르소나 모델링</span><span class="page-no">25 / 31</span></footer></section></div><div class="wrap"><section class="slide research-page " id="p26" data-project="03 NUNBIT" data-title="한 번의 질문이, 여러 번의 확인으로 이어지는 순간." style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / PROBLEM FRAMING</span></div><header><h1>한 번의 질문이,<br>여러 번의 확인으로 이어지는 순간.</h1></header><div class="body">
 <span class="rp-label">재구성한 사용 시나리오에서 문제를 구체화</span>
 <div class="rp-journey">
  <article><div class="rp-step"><span>01</span><h3>손님의 질문</h3></div><p class="rp-scenario">“사장님, 이 고등어<br>얼마예요?”</p><p class="rp-explain">짧은 문장에 품목과<br>질문의 의도가 함께 담긴다.</p></article>
@@ -2772,11 +2830,11 @@ $(&#x27;faceTarget&#x27;).removeAttribute(&#x27;tabindex&#x27;);$(&#x27;faceTarg
  <div class="ne-edit-bridge"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="39" viewBox="0 0 22 39" aria-hidden="true"><path d="M11 0 V35 M4 28 L11 35 L18 28" fill="none" stroke="#8b9c8e" stroke-width="1.3"/></svg><span>대화 속 품목에 새로운 수량을 연결</span></div>
  <div class="ne-meaning"><div><small>앞선 품목</small><strong>고등어</strong></div><span class="ne-dot">·</span><div><small>수량</small><strong>2마리</strong></div></div>
  <p class="ne-explain">문장에 품목이 반복되지 않아도,<br>앞선 맥락과 이번 요청을 함께 읽도록 한다.</p></article>
-</div></div><footer><span>정보 편집 원리 / 실제 시나리오의 발화와 요약 예시 · 화면에서는 원문을 유지하고 아래에 요약을 추가한다.</span><span class="page-no">28 / 31</span></footer></section></div><div class="wrap"><section class="slide nunbit-editorial " data-project="03 NUNBIT" data-title="크기, 명도, 투명도. 조용하게 읽히는 시각 규칙." id="p29" style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / VISUAL GRAMMAR</span></div><header><h1>크기, 명도, 투명도.<br>조용하게 읽히는 시각 규칙.</h1></header><div class="body"><div class="ne-vector"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 540" width="1408" height="540" role="img" aria-label="NUNBIT의 글자 위계, 화자 연결 표시, 반투명 표면 규칙" style="font-family:NUNBITEditorial,Pretendard,sans-serif"><title>NUNBIT의 글자 위계, 화자 연결 표시, 반투명 표면 규칙</title><rect x="0" y="0" width="770" height="524" rx="0" fill="#252a30" stroke="none" /><text x="32" y="39" font-size="14" fill="#bac0c7" font-weight="500" text-anchor="start">01 / TYPE HIERARCHY</text><text x="32" y="100" font-size="29" fill="white" font-weight="400" text-anchor="start">맥락은 작게, 핵심은 크게.</text><line x1="32" y1="139" x2="738" y2="139" stroke="#ffffff" stroke-width="1" opacity=".2"/><text x="32" y="187" font-size="13" fill="#bac0c7" font-weight="400" text-anchor="start">ORIGINAL  /  16 PX · WHITE 72%</text><text x="32" y="246" opacity=".72" font-size="32" fill="#ffffff" font-weight="400" text-anchor="start">사장님, 이 고등어 얼마예요?</text><text x="32" y="314" font-size="13" fill="#bac0c7" font-weight="400" text-anchor="start">SUMMARY  /  27 PX · WHITE 100%</text><text x="32" y="389" font-size="54" fill="#ffffff" font-weight="650" text-anchor="start">고등어 · 가격 문의</text><line x1="32" y1="452" x2="738" y2="452" stroke="#ffffff" stroke-width="1" opacity=".2"/><text x="32" y="488" font-size="17" fill="white" font-weight="400" text-anchor="start">Pretendard</text><text x="738" y="488" font-size="17" fill="#bac0c7" font-weight="400" text-anchor="end">크기 비례 16 : 27</text><text x="818" y="30" font-size="14" fill="#4c6b60" font-weight="500" text-anchor="start">02 / LOCATOR</text><line x1="818" y1="49" x2="1408" y2="49" stroke="#d8dde1" stroke-width="1" /><rect x="818" y="72" width="184" height="164" rx="0" fill="#777f88" stroke="none" /><g transform="translate(910 100) scale(4)"><path d="M-5 0 H5 L0 8 Z" fill="#ffffff"/><path d="M0 8 V24" stroke="#ffffff" stroke-opacity=".38" stroke-width="1"/></g><text x="1034" y="106" font-size="23" fill="#23272c" font-weight="400" text-anchor="start">화자 아래의 작은 기준점</text><text x="1034" y="147" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">삼각형 10 × 8 px</text><text x="1034" y="178" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">연결선 1 × 16 px</text><text x="1034" y="218" font-size="15" fill="#777e85" font-weight="400" text-anchor="start">형태 비례를 유지한 4배 확대</text><text x="818" y="282" font-size="14" fill="#4c6b60" font-weight="500" text-anchor="start">03 / SURFACE</text><line x1="818" y1="301" x2="1408" y2="301" stroke="#d8dde1" stroke-width="1" /><rect x="818" y="324" width="184" height="174" rx="0" fill="#777f88" stroke="none" /><rect x="838" y="349" width="144" height="122" rx="17" fill="#ffffff" stroke="#ffffff" fill-opacity=".08" stroke-opacity=".28"/><text x="1034" y="359" font-size="23" fill="#23272c" font-weight="400" text-anchor="start">시야를 남기는 표면</text><text x="1034" y="400" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">채움 White 8%</text><text x="1034" y="431" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">테두리 White 28% · 1 px</text><text x="1034" y="472" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">모서리 17 px</text></svg></div></div><footer><span>시각 규칙 / v7 구현값 기준 · 왼쪽 글자는 크기 비례를 보여주는 2배 확대 견본</span><span class="page-no">29 / 31</span></footer></section></div><div class="wrap"><section class="slide nunbit-editorial" data-project="03 NUNBIT" data-title="대면 거래의 소통 구조를 잇는, 적용 가능성과 향후 검증 과제" id="p30" style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / TRANSFERABILITY &amp; NEXT STEPS</span></div><header><h1 style="font-size: clamp(28px, 2.6vw, 36px); line-height: 1.3; letter-spacing: -0.02em;">대면 거래의 소통 구조를 잇는,<br>적용 가능성과 향후 검증 과제.</h1></header><div class="body"><div class="p30-canvas">
+</div></div><footer><span>정보 편집 원리 / 실제 시나리오의 발화와 요약 예시 · 화면에서는 원문을 유지하고 아래에 요약을 추가한다.</span><span class="page-no">28 / 31</span></footer></section></div><div class="wrap"><section class="slide nunbit-editorial " data-project="03 NUNBIT" data-title="크기, 명도, 투명도. 조용하게 읽히는 시각 규칙." id="p29" style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / VISUAL GRAMMAR</span></div><header><h1>크기, 명도, 투명도.<br>조용하게 읽히는 시각 규칙.</h1></header><div class="body"><div class="ne-vector"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 540" width="1408" height="540" role="img" aria-label="NUNBIT의 글자 위계, 화자 연결 표시, 반투명 표면 규칙" style="font-family:NUNBITEditorial,Pretendard,sans-serif"><title>NUNBIT의 글자 위계, 화자 연결 표시, 반투명 표면 규칙</title><rect x="0" y="0" width="770" height="524" rx="0" fill="#252a30" stroke="none" /><text x="32" y="39" font-size="14" fill="#bac0c7" font-weight="500" text-anchor="start">01 / TYPE HIERARCHY</text><text x="32" y="100" font-size="29" fill="white" font-weight="400" text-anchor="start">맥락은 작게, 핵심은 크게.</text><line x1="32" y1="139" x2="738" y2="139" stroke="#ffffff" stroke-width="1" opacity=".2"/><text x="32" y="187" font-size="13" fill="#bac0c7" font-weight="400" text-anchor="start">ORIGINAL  /  16 PX · WHITE 72%</text><text x="32" y="246" opacity=".72" font-size="32" fill="#ffffff" font-weight="400" text-anchor="start">사장님, 이 고등어 얼마예요?</text><text x="32" y="314" font-size="13" fill="#bac0c7" font-weight="400" text-anchor="start">SUMMARY  /  27 PX · WHITE 100%</text><text x="32" y="389" font-size="54" fill="#ffffff" font-weight="650" text-anchor="start">고등어 · 가격 문의</text><line x1="32" y1="452" x2="738" y2="452" stroke="#ffffff" stroke-width="1" opacity=".2"/><text x="32" y="488" font-size="17" fill="white" font-weight="400" text-anchor="start">Pretendard</text><text x="738" y="488" font-size="17" fill="#bac0c7" font-weight="400" text-anchor="end">크기 비례 16 : 27</text><text x="818" y="30" font-size="14" fill="#4c6b60" font-weight="500" text-anchor="start">02 / LOCATOR</text><line x1="818" y1="49" x2="1408" y2="49" stroke="#d8dde1" stroke-width="1" /><rect x="818" y="72" width="184" height="164" rx="0" fill="#777f88" stroke="none" /><g transform="translate(910 100) scale(4)"><path d="M-5 0 H5 L0 8 Z" fill="#ffffff"/><path d="M0 8 V24" stroke="#ffffff" stroke-opacity=".38" stroke-width="1"/></g><text x="1034" y="106" font-size="23" fill="#23272c" font-weight="400" text-anchor="start">화자 아래의 작은 기준점</text><text x="1034" y="147" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">삼각형 10 × 8 px</text><text x="1034" y="178" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">연결선 1 × 16 px</text><text x="1034" y="218" font-size="15" fill="#777e85" font-weight="400" text-anchor="start">형태 비례를 유지한 4배 확대</text><text x="818" y="282" font-size="14" fill="#4c6b60" font-weight="500" text-anchor="start">03 / SURFACE</text><line x1="818" y1="301" x2="1408" y2="301" stroke="#d8dde1" stroke-width="1" /><rect x="818" y="324" width="184" height="174" rx="0" fill="#777f88" stroke="none" /><rect x="838" y="349" width="144" height="122" rx="17" fill="#ffffff" stroke="#ffffff" fill-opacity=".08" stroke-opacity=".28"/><text x="1034" y="359" font-size="23" fill="#23272c" font-weight="400" text-anchor="start">시야를 남기는 표면</text><text x="1034" y="400" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">채움 White 8%</text><text x="1034" y="431" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">테두리 White 28% · 1 px</text><text x="1034" y="472" font-size="19" fill="#777e85" font-weight="400" text-anchor="start">모서리 17 px</text></svg></div></div><footer><span>시각 규칙 / v7 구현값 기준 · 왼쪽 글자는 크기 비례를 보여주는 2배 확대 견본</span><span class="page-no">29 / 31</span></footer></section></div><div class="wrap"><section class="slide nunbit-editorial" data-project="03 NUNBIT" data-title="대면 거래의 소통 구조를 잇는, 적용 가능성과 향후 검증 과제" id="p30" style="--accent:#4c6b60"><div class="top"><span>JUNGRYUN KWON</span><span>03 NUNBIT / TRANSFERABILITY &amp; NEXT STEPS</span></div><header><h1>대면 거래의 소통 구조를 잇는,<br>적용 가능성과 향후 검증 과제.</h1></header><div class="body"><div class="p30-canvas">
 
   <!-- 중단: 2-Column (LEFT 38% / RIGHT 62%) -->
   <div class="p30-main-grid">
-    <!-- 좌측: 설계 원리 및 적용 가능한 조건 -->
+    <!-- 좌측: 설계 원리 및 적용 가능한 조건 (순수 타이포그래피) -->
     <div class="p30-logic-col">
       <div class="p30-principle-block">
         <span class="p30-label">01 / DESIGN PRINCIPLE</span>
@@ -2812,7 +2870,7 @@ $(&#x27;faceTarget&#x27;).removeAttribute(&#x27;tabindex&#x27;);$(&#x27;faceTarg
       </div>
     </div>
 
-    <!-- 우측: 확장된 도식 다이어그램 (피규어 패널) -->
+    <!-- 우측: 확장된 도식 다이어그램 + NUNBIT HUD 시각적 기억 조각 -->
     <figure class="p30-diagram-figure">
       <div class="p30-svg-frame">
         <svg viewBox="0 0 760 440" role="img" aria-label="NUNBIT의 설계 구조가 소매점, 전통시장, 대면 서비스 카운터로 이어지며 공통 대면 거래 조건을 공유하는 확장 관계도">
@@ -2850,30 +2908,37 @@ $(&#x27;faceTarget&#x27;).removeAttribute(&#x27;tabindex&#x27;);$(&#x27;faceTarg
           <text x="380" y="369" text-anchor="middle" font-size="15" font-weight="700" letter-spacing="-0.2px" fill="#1e252e">Face-to-face transaction</text>
           <text x="380" y="390" text-anchor="middle" font-size="12.5" fill="#566371">마주 보며 짧은 정보를 주고받는 상황</text>
         </svg>
+
+        <!-- 오른쪽 하단 NUNBIT 실물 인터페이스 기억 잔상 (Tactile HUD Fragment) -->
+        <div class="p30-hud-fragment">
+          <div class="p30-hud-anchor"></div>
+          <div class="p30-hud-data">
+            <span class="p30-hud-main">고등어 · 2마리</span>
+            <span class="p30-hud-sub">₩12,000 · FACE-ADJACENT HUD</span>
+          </div>
+        </div>
       </div>
     </figure>
   </div>
 
-  <!-- 하단: Full-width Next Validation Strip -->
+  <!-- 하단: Full-width Next Validation (카드 박스를 걷어낸 순수 에디토리얼 3열 스트립) -->
   <div class="p30-validation-strip">
-    <div class="p30-val-card">
-      <div class="p30-val-header">
-        <span class="p30-val-tag">03 / NEXT VALIDATION</span>
-        <span class="p30-val-sub">실제 시장 환경에서는 다음 세 가지 핵심 지표를 추가로 비교 검증할 필요가 있다.</span>
+    <div class="p30-val-header">
+      <span class="p30-val-tag">03 / NEXT VALIDATION</span>
+      <span class="p30-val-sub">실제 시장 환경에서는 다음 세 가지 핵심 지표를 추가로 비교 검증할 필요가 있다.</span>
+    </div>
+    <div class="p30-val-grid">
+      <div class="p30-val-col">
+        <strong class="p30-val-term">GAZE SHIFT</strong>
+        <p class="p30-val-desc">정보 위치에 따른 시선 이동과 상대 얼굴 응시 비율</p>
       </div>
-      <div class="p30-val-grid">
-        <div class="p30-val-col">
-          <strong class="p30-val-term">GAZE SHIFT</strong>
-          <p class="p30-val-desc">정보 위치에 따른 시선 이동과 상대 얼굴 응시 비율</p>
-        </div>
-        <div class="p30-val-col">
-          <strong class="p30-val-term">REPETITION</strong>
-          <p class="p30-val-desc">소음 속 확인 질문 및 거래어 되묻기 발생 빈도</p>
-        </div>
-        <div class="p30-val-col">
-          <strong class="p30-val-term">COMPREHENSION</strong>
-          <p class="p30-val-desc">품목·수량·가격 등 거래 핵심 정보의 즉각적인 이해 정도</p>
-        </div>
+      <div class="p30-val-col">
+        <strong class="p30-val-term">REPETITION</strong>
+        <p class="p30-val-desc">소음 속 확인 질문 및 거래어 되묻기 발생 빈도</p>
+      </div>
+      <div class="p30-val-col">
+        <strong class="p30-val-term">COMPREHENSION</strong>
+        <p class="p30-val-desc">품목·수량·가격 등 거래 핵심 정보의 즉각적인 이해 정도</p>
       </div>
     </div>
     <p class="p30-disclaimer">※ 확장 범위는 설계 판단에 따른 예상이며, 현재까지 실제 검증을 수행한 결과는 아니다.</p>
