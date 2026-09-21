@@ -1757,6 +1757,504 @@ h1,h2,h3{font-weight:400}.cover-index b,.closing-grid b{font-weight:400}.criteri
   line-height: 1.5;
   letter-spacing: -0.2px;
 }
+</style><style id="toss-vertical-balance-system">
+/* ==========================================================================
+   TOSS PORTFOLIO: Unified Vertical Grid & Baseline Alignment (1600x900 Canvas)
+   - Height of .body is strictly standardized to 590px across p24, p25, p30.
+   - Main content bottom edge terminates consistently at the exact same baseline.
+   - Header, Topline, and Footer lines are identical across all slides.
+   - Ample breathing room above footer without dead empty voids.
+   ========================================================================== */
+
+#p24 .body, #p25 .body, #p30 .body {
+  height: 590px !important;
+  min-height: 590px !important;
+  max-height: 590px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+}
+
+/* -------------------- 24p Layout -------------------- */
+#p24 .p24-refined-layout {
+  display: grid !important;
+  grid-template-columns: 500px 1fr !important;
+  gap: 48px !important;
+  align-items: stretch !important;
+  height: 100% !important;
+}
+
+#p24 .p24-editorial-col {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+}
+
+#p24 .p24-lead {
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+  color: #38424d !important;
+  margin: 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p24 .p24-chain {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+#p24 .p24-chain-node {
+  border-top: 1px solid #dce2e8 !important;
+  padding-top: 14px !important;
+}
+
+#p24 .p24-tag {
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #5b6673 !important;
+  margin-bottom: 5px !important;
+}
+
+#p24 .p24-chain-node p {
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  color: #202730 !important;
+  margin: 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p24 .p24-implication-block {
+  border-top: 2px solid #202c3a !important;
+  padding-top: 18px !important;
+  margin-top: auto !important;
+}
+
+#p24 .p24-imp-tag {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  color: #4c6b60 !important;
+  display: block !important;
+  margin-bottom: 5px !important;
+}
+
+#p24 .p24-imp-core {
+  font-size: 16.5px !important;
+  line-height: 1.48 !important;
+  font-weight: 600 !important;
+  color: #171d24 !important;
+  display: block !important;
+  margin-bottom: 10px !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p24 .p24-next-hook {
+  display: block !important;
+  font-size: 13px !important;
+  color: #4c6b60 !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p24 .p24-figure-col {
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+}
+
+#p24 .p24-frame {
+  background: #ffffff !important;
+  border: 1px solid #dde3e0 !important;
+  border-radius: 10px !important;
+  padding: 14px 18px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1 !important;
+}
+
+#p24 .p24-frame svg {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 490px !important;
+}
+
+#p24 figcaption {
+  font-size: 12px !important;
+  color: #697482 !important;
+  margin-top: 10px !important;
+  line-height: 1.45 !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* -------------------- 25p Layout -------------------- */
+#p25 .p25-refined-layout {
+  display: grid !important;
+  grid-template-columns: 320px 1fr !important;
+  gap: 48px !important;
+  align-items: stretch !important;
+  height: 100% !important;
+}
+
+#p25 .p25-persona-col {
+  border-right: 1px solid #e2e8e5 !important;
+  padding-right: 36px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  text-align: center !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#p25 .p25-portrait-wrap {
+  width: 168px !important;
+  height: 168px !important;
+  border-radius: 50% !important;
+  border: 2.5px solid #4c6b60 !important;
+  box-shadow: 0 4px 18px rgba(76, 107, 96, 0.14) !important;
+  overflow: hidden !important;
+  background: #23272c !important;
+  flex-shrink: 0 !important;
+  margin-bottom: 18px !important;
+}
+
+#p25 .p25-portrait-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+#p25 .p25-persona-info {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: 100% !important;
+}
+
+#p25 .p25-name-block strong {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: #1e252d !important;
+  display: block !important;
+  letter-spacing: -0.02em !important;
+}
+
+#p25 .p25-name-block span {
+  font-size: 14px !important;
+  color: #5a646e !important;
+  display: block !important;
+  margin-top: 4px !important;
+}
+
+#p25 .p25-tags {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+}
+
+#p25 .p25-tag {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 3.5px 9px !important;
+  border-radius: 4px !important;
+  background: #e8ede9 !important;
+  color: #3b574e !important;
+}
+
+#p25 .p25-tag.accent {
+  background: #4c6b60 !important;
+  color: #fff !important;
+}
+
+#p25 .p25-quote {
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  border-left: 2.5px solid #4c6b60 !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  color: #424c56 !important;
+  text-align: left !important;
+  background: #f9fbf9 !important;
+  border-radius: 0 6px 6px 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p25 .p25-editorial-col {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  padding-left: 8px !important;
+  box-sizing: border-box !important;
+}
+
+#p25 .p25-matrix-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+#p25 .p25-section {
+  border-top: 1px solid #dce2e8 !important;
+  padding-top: 14px !important;
+}
+
+#p25 .p25-sec-label {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #64707e !important;
+  display: block !important;
+  margin-bottom: 5px !important;
+}
+
+#p25 .p25-sec-text {
+  font-size: 14.5px !important;
+  line-height: 1.6 !important;
+  color: #272f38 !important;
+  margin: 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p25 .p25-opp-container {
+  background: #f4f7f5 !important;
+  border: 1px solid #d8e2de !important;
+  border-radius: 8px !important;
+  padding: 22px 26px !important;
+  box-sizing: border-box !important;
+  margin-top: auto !important;
+}
+
+#p25 .p25-opp-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  color: #4c6b60 !important;
+  display: block !important;
+  margin-bottom: 6px !important;
+}
+
+#p25 .p25-opp-question {
+  font-size: 16.5px !important;
+  line-height: 1.5 !important;
+  font-weight: 600 !important;
+  color: #171f26 !important;
+  display: block !important;
+  margin-bottom: 10px !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p25 .p25-next-hook {
+  display: block !important;
+  font-size: 13px !important;
+  color: #4c6b60 !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* -------------------- 30p Layout -------------------- */
+#p30 .p30-canvas {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+}
+
+#p30 .p30-main-grid {
+  display: grid !important;
+  grid-template-columns: 0.38fr 0.62fr !important;
+  gap: 40px !important;
+  align-items: stretch !important;
+  flex: 1 !important;
+  margin-bottom: 22px !important;
+  min-height: 390px !important;
+}
+
+#p30 .p30-logic-col {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+}
+
+#p30 .p30-principle-block {
+  border-top: 2px solid #202c3a !important;
+  padding: 16px 0 8px !important;
+}
+
+#p30 .p30-label {
+  display: block !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  color: #4c6b60 !important;
+  font-weight: 700 !important;
+  margin-bottom: 6px !important;
+}
+
+#p30 .p30-principle-text {
+  display: block !important;
+  font-size: 17px !important;
+  line-height: 1.45 !important;
+  font-weight: 600 !important;
+  color: #1e242b !important;
+  letter-spacing: -0.01em !important;
+  margin-bottom: 6px !important;
+}
+
+#p30 .p30-principle-desc {
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+  color: #485460 !important;
+  margin: 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p30 .p30-conditions-block {
+  border-top: 1px solid #dce2e8 !important;
+  padding: 16px 0 6px !important;
+}
+
+#p30 .p30-cond-label {
+  display: block !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  color: #6a7683 !important;
+  font-weight: 700 !important;
+  margin-bottom: 12px !important;
+}
+
+#p30 .p30-cond-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+#p30 .p30-cond-item {
+  display: grid !important;
+  grid-template-columns: 24px 1fr !important;
+  gap: 10px !important;
+  align-items: baseline !important;
+}
+
+#p30 .p30-cond-num {
+  font-size: 12.5px !important;
+  color: #4c6b60 !important;
+  font-weight: 700 !important;
+}
+
+#p30 .p30-cond-item p {
+  font-size: 14.5px !important;
+  line-height: 1.55 !important;
+  color: #333c46 !important;
+  margin: 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p30 .p30-diagram-figure {
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+#p30 .p30-svg-frame {
+  background: #ffffff !important;
+  border: 1px solid #dde3e0 !important;
+  border-radius: 10px !important;
+  padding: 12px 18px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+}
+
+#p30 .p30-svg-frame svg {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 390px !important;
+}
+
+#p30 .p30-validation-strip {
+  border-top: 1px solid #dce2e8 !important;
+  padding-top: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+#p30 .p30-val-header {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 14px !important;
+}
+
+#p30 .p30-val-tag {
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  color: #4c6b60 !important;
+  font-weight: 700 !important;
+}
+
+#p30 .p30-val-sub {
+  font-size: 13.5px !important;
+  color: #3e4854 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p30 .p30-val-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
+  background: #f7f9f8 !important;
+  border: 1px solid #e2e8e5 !important;
+  border-radius: 6px !important;
+  padding: 12px 20px !important;
+}
+
+#p30 .p30-val-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+#p30 .p30-val-term {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #202c3a !important;
+}
+
+#p30 .p30-val-desc {
+  font-size: 13px !important;
+  line-height: 1.48 !important;
+  color: #556270 !important;
+  margin: 0 !important;
+  letter-spacing: -0.2px !important;
+}
+
+#p30 .p30-disclaimer {
+  font-size: 11.5px !important;
+  color: #838e9a !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  letter-spacing: -0.2px !important;
+}
 </style></head><body><main><div class="wrap"><section class="slide cover reference-cover" data-project="PORTFOLIO" data-title="Jungryun Kwon" id="p1" style="--accent:#4656df"><div class="reference-cover-content">
         <div class="reference-cover-eyebrow">Visual &amp; Experience Design Portfolio — 2026</div>
         <div class="reference-cover-name">Jungryun Kwon</div>
